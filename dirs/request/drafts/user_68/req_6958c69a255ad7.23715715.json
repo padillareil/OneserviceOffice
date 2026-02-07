@@ -1,0 +1,13 @@
+{
+    "draft_id": "req_6958c69a255ad7.23715715",
+    "user_id": 68,
+    "created_at": "2026-01-03 08:34:50",
+    "request": {
+        "service": "IT",
+        "urgency": "High",
+        "greetings": "Good morning sir dems!",
+        "purpose": "System Implementation",
+        "description": "We need your help for the new system implementation feature.",
+        "attachment": null
+    }
+}

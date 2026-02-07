@@ -1,0 +1,22 @@
+$Actions = 'Change Account Password';
+date_default_timezone_set('Asia/Manila');
+$Date = date('Y-m-d');     
+$Time = date('H:i:s'); 
+
+
+    $ins_activity = $conn->prepare("EXEC dbo.[AUTOGENERATE_ACVTYLOGS] @Username_= ?, @Actions_ = ?, @Date_ = ?, @Time_= ?");
+    $ins_activity->execute([$Username, $Actions, $Date, $Time]);
+    function selectBranch() {
+      $.post("dirs/dashboard/actions/get_branches.php", {}, function(data) {
+        var response = JSON.parse(data);
+        if ($.trim(response.isSuccess) === "success") {
+          var branches = response.Data;
+          $("#filter-branch").empty().append('<option value="">ALL BRANCH</option>');
+          branches.forEach(function(branch) {
+            $("#filter-branch").append('<option value="' + branch.Branch + '">' + branch.Branch + '</option>');
+          });
+        } else {
+          alert($.trim(response.Data));
+        }
+      });
+    }
