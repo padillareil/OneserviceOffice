@@ -96,7 +96,7 @@ try {
                             </a>
                         </li> 
                         <li class="nav-item">
-                             <a href="#" class="nav-link" name="menu" menucode="acccount">
+                             <a href="#" class="nav-link" name="menu" menucode="accounts">
                                 <i class="nav-icon bi bi-people"></i>
                                 <p>Accounts</p>
                             </a>
