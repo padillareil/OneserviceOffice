@@ -63,58 +63,82 @@ function mdladdService() {
 
         data.forEach(srv => {
             let statusBadge = `
-                <span class="badge bg-success mb-2 align-self-start">
-                    Available
+                <span class="badge bg-primary mb-2 align-self-start">
+                    OPEN
                 </span>
             `;
             if (parseInt(srv.Srv_Status) === 2) {
                 statusBadge = `
                     <span class="badge bg-danger mt-2 align-self-start">
-                        Not Available
+                        CLOSED
                     </span>
                 `;
             }
+            // ===== Publication Badge =====
+            let publicationBadge = srv.Publication === 'PB'
+              ? `<span class="badge text-dark border">
+                   <i class="bi bi-globe me-1"></i> Public
+                 </span>`
+              : `<span class="badge bg-danger-subtle text-danger border">
+                   <i class="bi bi-building-lock me-1"></i> Private
+                 </span>`;
+
             display.append(`
-                <div class="col-sm-2 mb-3">
-                    <div class="card card-shadow h-100">
-                        <div class="card-body d-flex flex-column">
-                            <h4 class="card-title fw-semibold mb-1">
-                                ${srv.Srv_Name}
-                            </h4>
-
-                            ${statusBadge}
-
-                            <h5 class="card-text text-muted mb-2">
-                                ${srv.Description}
-                            </h5>
-                            <div class="mt-auto pt-2 border-top">
-                                <small class="text-muted fw-semibold d-block mb-1">
-                                    <i class="bi bi-clock"></i> Available Time
-                                </small>
-
-                                <div class="d-flex justify-content-between small">
-                                    <span class="text-muted">From:</span>
-                                    <span class="fw-medium">${srv.Opt_Start}</span>
-                                </div>
-
-                                <div class="d-flex justify-content-between small">
-                                    <span class="text-muted">To:</span>
-                                    <span class="fw-medium">${srv.Opt_End}</span>
-                                </div>
-                            </div>
+                <div class="col-sm-3 mb-3">
+                  <div class="card h-100 border-0 shadow-sm rounded-4 service-card">
+                    <div class="card-body d-flex flex-column p-4">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold mb-0 text-dark">
+                          ${srv.ServiceName}
+                        </h5>
+                        ${statusBadge}
+                      </div>
+                      <hr>
+                      <p class="text-muted mb-3">
+                        ${srv.Description}
+                      </p>
+                      <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div class="d-flex gap-2">
+                          ${publicationBadge}
+                          <span class="badge bg-light text-secondary border">
+                            ${srv.ServiceType}
+                          </span>
                         </div>
-                        <div class="card-footer">
-                            <div class="justify-content-end d-flex">
-                                <button class="btn btn-outline-primary btn-sm " type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="editPost('${srv.Srv_id}')">
-                                  <i class="bi bi-pencil"></i>  Edit
-                                </button>
-                            </div
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear"></i> Actions
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                            <li>
+                              <a class="dropdown-item" href="#" onclick="editPost('${srv.Srv_id}')">
+                                <i class="bi bi-pencil me-2"></i>Edit Service
+                              </a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="#" onclick="blockPost('${srv.Srv_id}')">
+                                <i class="bi bi-ban me-2"></i>Disable Service
+                              </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                              <a class="dropdown-item" href="#" onclick="setPublic('${srv.Srv_id}')">
+                                <i class="bi bi-globe me-2"></i>Make Public
+                              </a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="#" onclick="setPrivate('${srv.Srv_id}')">
+                                <i class="bi bi-building-lock me-2"></i>Make Private
+                              </a>
+                            </li>
+                          </ul>
                         </div>
+                      </div>
                     </div>
+                  </div>
                 </div>
-            `);
-        });
-    }
+                `);
+            });
+        }
 
 
 
@@ -136,18 +160,19 @@ function mdladdService() {
 
     /*Function edit Post*/
     function editPost(Srv_id){
-        $("#mdl-upd-service").modal('show');
+        $("#mdl-create-service").modal('show');
         $.post("dirs/services/actions/get_edit_service.php",{
             Srv_id : Srv_id
         },function(data){
             response = JSON.parse(data);
             if(jQuery.trim(response.isSuccess) == "success"){
-                $("#service_id").val(response.Data.Srv_id);
-                $("#upd-service-name").val(response.Data.Srv_Name);
-                $("#upd-type-of-service").val(response.Data.Srv_Type);
-              /*  $("#upd-operate-time-start").val(response.Data.Opt_Start);
-                $("#upd-operate-time-end").val(response.Data.Opt_End);*/
-                $("#upd-service-description").val(response.Data.Description);
+                $("#service-id").val(response.Data.RowNum);
+                $("#service-name").val(response.Data.ServiceName);
+                $("#type-of-service").val(response.Data.ServiceType);
+                $("#service-description").val(response.Data.Description);
+                $("#btn-update").removeClass('d-none');
+                $("#publish-title").html('Edit Post');
+                $("#btn-submit").addClass('d-none').prop('disabled', false);
             }else{
                 alert(jQuery.trim(response.Data));
             }
@@ -160,5 +185,44 @@ function mdladdService() {
         $("#btn-submit").removeClass('d-none');
         $("#btn-update").addClass('d-none');
         $("#frm-post")[0].reset();
+        $("#publish-title").html('Publish New Service');
     }
 
+
+
+
+/*Function save edit Update post*/
+function saveUpdate() {
+    var Serviceid    = $("#service-id").val();
+    var Title        = $("#service-name").val();
+    var Category     = $("#type-of-service").val();
+    var Description  = $("#service-description").val();
+
+    $.post("dirs/services/actions/update_servicepost.php", {
+        Serviceid   : Serviceid,
+        Title       : Title,
+        Category    : Category,
+        Description : Description,
+    }, function(data) {
+        if(jQuery.trim(data) === "success") {
+           $("#frm-post")[0].reset();
+           $("#mdl-create-service").modal('hide');
+           loadServices();
+           Swal.fire({
+               icon: "success",
+               title: "Post Update",
+               text: "Successfully.",
+               timer: 2000,
+               showConfirmButton: false
+           });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: data,
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    });
+}

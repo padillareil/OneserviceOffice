@@ -9,28 +9,26 @@
 	}
 
 
-	$fetch_user = $conn->prepare("CALL SESSIONUSER(?)");
+	$fetch_user = $conn->prepare("EXEC dbo.[SESSION_USERACCOUNT] ?");
     $fetch_user->execute([$User]);
     $get_user = $fetch_user->fetch(PDO::FETCH_ASSOC);
     $fetch_user->closeCursor();
 
 
 
-    $Department 	= $get_user['Department'] ?? null;
-	$Service 		=	$_POST['Service'];
-	$Type 			=	$_POST['Type'];
-	$Availability 	=	$_POST['Availability'];
-	$Start 			=	$_POST['Start'];
-	$End 			=	$_POST['End'];
+    $Department 	= $get_user['UserDepartment'] ?? null;
+	$Title 			=	$_POST['Title'];
+	$Category 		=	$_POST['Category'];
 	$Description 	=	$_POST['Description'];
-	$Control 		=	$_POST['Control'];
+	$Status 		=	1;
+	$Publication 	=	'PB';
 		
 	try{
 
 		$conn->beginTransaction();
 
-		$ins_service = $conn->prepare("CALL POST_SERVICE (?,?,?,?,?,?,?,?, ?)");
-		$ins_service->execute([$Service, $Type, $Availability, $Start, $End, $Description, $User, $Department, $Control]);
+		$ins_service = $conn->prepare("EXEC dbo.[POST_SERVICE] ?,?,?,?,?,?,?");
+		$ins_service->execute([$Department, $Title, $Category, $User, $Status, $Description, $Publication]);
 		
 		$conn->commit();
 		echo "OK";
@@ -42,3 +40,5 @@
 
 
 ?>
+
+

@@ -15,7 +15,7 @@
 try {
   $conn->beginTransaction();
 
-    $fetch_services = $conn->prepare("CALL RET_SERVICE (?)");
+    $fetch_services = $conn->prepare("EXEC dbo.[SRVCS_INFO] ?");
     $fetch_services->execute([$Srv_id]);
     $get_srvs = $fetch_services->fetch(PDO::FETCH_ASSOC);
     $fetch_services->closeCursor();

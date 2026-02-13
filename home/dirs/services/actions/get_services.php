@@ -10,12 +10,12 @@
       exit();
   }
 
-  $fetch_user = $conn->prepare("CALL SESSIONUSER(?)");
+  $fetch_user = $conn->prepare("EXEC dbo.[SESSION_USERACCOUNT] ? ");
   $fetch_user->execute([$User]);
   $get_user = $fetch_user->fetch(PDO::FETCH_ASSOC);
   $fetch_user->closeCursor();
 
-  $Department   = $get_user['Department'];
+  $Department   = $get_user['UserDepartment'];
   $CurrentPage  = $_POST['CurrentPage'] ?? 1;
   $PageSize     = $_POST['PageSize'] ?? 100;
 
@@ -23,8 +23,8 @@
 try {
   $conn->beginTransaction();
 
-    $fetch_services = $conn->prepare("CALL POSTED_SERVICES (?,?,?)");
-    $fetch_services->execute([$PageSize, $CurrentPage, $Department ]);
+    $fetch_services = $conn->prepare("EXEC dbo.[POSTED_SERVICES] ?,?,?");
+    $fetch_services->execute([$Department , $CurrentPage,$PageSize]);
     $get_srvs = $fetch_services->fetchAll(PDO::FETCH_ASSOC);
     $fetch_user->closeCursor();
 

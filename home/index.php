@@ -1,7 +1,7 @@
 <?php
-session_start();
 require_once "../config/connection.php";
 require_once "../config/functions.php";
+session_start();
 
 
 if (!isset($_SESSION['Uid'])) {
@@ -11,7 +11,7 @@ if (!isset($_SESSION['Uid'])) {
 $User = $_SESSION['Uid'];
 
 try {
-    $ua = $conn->prepare("CALL SESSIONUSER (?)");
+    $ua = $conn->prepare("EXEC dbo.[SESSION_USERACCOUNT] ?");
     $ua->execute([$User]);
     $user = $ua->fetch(PDO::FETCH_ASSOC);
 

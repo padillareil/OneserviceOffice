@@ -8,6 +8,8 @@ function loadCreateAccount() {
     }, function (data){
         $("#load_createaccount").html(data);
         loadUserAccount(); // load all user accounts
+        loadImperialBranch();
+
     });
 }
 
@@ -21,7 +23,31 @@ function showPassword() {
 
 function createAccount() {
     $("#modal-add-account").modal('show');
+
   /*  $('#portal_id').val(generatePortalId(12));*/
+}
+
+
+
+/*load Imperial Branches*/
+function loadImperialBranch() {
+  $.post("dirs/create_account/actions/get_branch.php", {}, function(data) {
+    const response = JSON.parse(data);
+    if ($.trim(response.isSuccess) === "success") {
+      const branches = response.Data;
+      $("#branch").html('<option selected value="">Select Branch</option>');
+      branches.forEach(branch => {
+        $("#branch").append(
+          $("<option>", {
+            value: branch.Branch,
+            text: branch.Branch
+          })
+        );
+      });
+    } else {
+      alert($.trim(response.Data));
+    }
+  });
 }
 
 /*Function generate Portal ID Automatic*/
@@ -42,16 +68,18 @@ $("#frm-account").submit(function(event) {
         var Position = $("#position").val();
         var Username  = $("#username").val();
         var Password = $("#password").val();
-        var PortalID = $("#portal_id").val();
+        var Role    = $("#user-role").val();
         var Department = $("#department").val();
+        var Branch = $("#branch").val();
 
         $.post("dirs/create_account/actions/save_account.php", {
             Fullname: Fullname,
             Position: Position,
             Username: Username,
             Password: Password,
-            PortalID: PortalID,
-            Department: Department
+            Role: Role,
+            Department: Department,
+            Branch: Branch
         }, function(data) {
             data = $.trim(data);
             if (data === "OK") {
@@ -90,7 +118,6 @@ var pageSize = 100;
 
 function loadUserAccount(page = 1) {
     var Search = $("#search-account").val();
-
     $.post("dirs/create_account/actions/get_account.php", {
         CurrentPage: page,
         PageSize: pageSize,
@@ -137,9 +164,9 @@ function renderAccounts(data) {
                     </span>
                     <div class="info-box-content">
                         
-                        <span class="info-box-text">${req.Fullname}</span>
-                        <span class="info-box-number">${req.Position}</span>
-                        <small>${req.Region ?? 'Head Office'}</small>
+                        <span class="info-box-text">${req.UserFullname}</span>
+                        <span class="info-box-number">${req.UserJobPosition}</span>
+                        <small>${req.BranchRegion ?? 'Head Office'}</small>
                     </div>
                     <div class="justify-content-end d-flex">
                         <div class="dropdown">

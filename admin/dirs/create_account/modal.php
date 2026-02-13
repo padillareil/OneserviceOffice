@@ -15,15 +15,19 @@
             <label for="position" class="form-label">Position</label>
             <input type="text" name="position" id="position" class="form-control" required autocomplete="off">
           </div>
-
           <div class="mb-3">
-            <label for="user-role" class="form-label">Role</label>
             <select class="form-select" id="user-role" name="user-role" required>
               <option value="">-- Choose Role --</option>
               <option value="1">Admin</option>
               <option value="2">Department Admin</option>
               <option value="3">Client / Requestor</option>
               <option value="4">System Checker</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="branch" class="form-label">Branch</label>
+            <select class="form-select" id="branch" required>
+              <option selected value="">--</option>
             </select>
           </div>
           <div class="mb-3">
@@ -40,25 +44,24 @@
             <label for="password" class="form-label">Password</label>
             <input type="password" name="password" id="password" class="form-control" required autocomplete="off">
           </div>
-
           <div class="form-check mb-4">
             <input class="form-check-input" type="checkbox" id="show-password" onclick="showPassword()">
             <label class="form-check-label" for="show-password">
               Show Password
             </label>
           </div>
-
         </div>
-
         <div class="modal-footer">
           <button type="submit" class="btn btn-success">Save</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         </div>
-
       </div>
     </div>
   </div>
 </form>
+
+
+
 
 <!-- <div class="from-input mb-3">
   <label form="portal_id">Portal ID</label>

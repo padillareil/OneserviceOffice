@@ -9,40 +9,84 @@
 	    exit();
 	}
 	
-	$User = $_SESSION['Uid'];
+	$User			= $_SESSION['Uid'];
 	$Fullname 		=	$_POST['Fullname'];
 	$Position 		=	$_POST['Position'];
 	$Username 		=	$_POST['Username'];
-	$Department 	=	$_POST['Department'];
 	$Password 		=	hash_password($_POST['Password']);
-	$PortalID 		=	$_POST['PortalID'] ?? NULL;
-	$Role 			=	'Client';
-
+	$Role 			=	$_POST['Role'];
+	$Department 	=	$_POST['Department'];
+	$Branch 		=	$_POST['Branch'];
+	$AccountStatus 	=	0; /*Meaning Active*/
+	$AccountMode 	=	0; /*Meaning New*/
+	$AccountAccess 	=	1; /*Meaning Enabled if 0 then blocked*/
 	
-	try{
-		$conn->beginTransaction();
+	$AccountType = '';
 
-		$check_error = $conn->prepare("
-		  SELECT *
-		  FROM user 
-		  WHERE 
-		  	Fullname = ?
-		  	OR Username = ?
-		");
-		$check_error->execute([ $Fullname, $Username ]);
-		$get_user = $check_error->fetch(PDO::FETCH_ASSOC);
+	if ($Role === '2') {
+	    $AccountType = 'EN/APP';
+	} elseif ($Role === '3') {
+	    $AccountType = 'EN';
+	} elseif ($Role === '4') {
+	    $AccountType = 'CKR';
+	} else {
+	    $AccountType = 'SA';
+	}
+	
+	try {
+	    $conn->beginTransaction();
 
-		if ($check_error->fetch()) {
-			exit('This account already exists.');
-		}
+	    /* Duplicate check */
+	    $check_error = $conn->prepare("
+	        SELECT 1
+	        FROM UserAccount
+	        WHERE UserFullname = ?
+	           OR UserName = ?
+	    ");
+	    $check_error->execute([$Fullname, $Username]);
 
-		$ins_account = $conn->prepare("INSERT INTO user
-			(Username, Password, Role, Position, Department, Fullname, Portal_id, Create_by)
-			VALUES(?,?,?,?,?,?,?,?)");
-		$ins_account->execute([$Username, $Password, $Role, $Position, $Department, $Fullname, $PortalID, $User]);
-		
-		$conn->commit();
-		echo "OK";
+	    if ($check_error->fetch()) {
+	        $conn->rollback();
+	        exit('This account already exists.');
+	    }
+
+	    /* Get Region from Branch */
+	    $get_region = $conn->prepare("EXEC dbo.[IAPREGION] ?");
+	    $get_region->execute([$Branch]);
+	    $regionRow = $get_region->fetch(PDO::FETCH_ASSOC);
+
+	    if (!$regionRow) {
+	        $conn->rollback();
+	        exit('Invalid branch selected.');
+	    }
+
+	    $Region = $regionRow['Region'];
+
+	    /* Insert account */
+	    $ins_account = $conn->prepare("
+	        INSERT INTO UserAccount
+	        (UserName, UserPassword, Role, UserJobPosition, UserDepartment,
+	         UserFullname, BranchAssignment, BranchRegion, AccountStatus, AccountMode, AccountType,AccountAccess)
+	        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+	    ");
+
+	    $ins_account->execute([
+	        $Username,
+	        $Password,
+	        $Role,
+	        $Position,
+	        $Department,
+	        $Fullname,
+	        $Branch,
+	        $Region,
+	        $AccountStatus,
+	        $AccountMode,
+	        $AccountType,
+	        $AccountAccess
+	    ]);
+
+	    $conn->commit();
+	    echo "OK";
 
 	}catch(PDOException $e){
 		$conn->rollback();
