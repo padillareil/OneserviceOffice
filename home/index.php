@@ -92,7 +92,19 @@ try {
                         <li class="nav-item">
                              <a href="#" class="nav-link" name="menu" menucode="services">
                                 <i class="nav-icon bi bi-stickies"></i>
-                                <p>Services</p>
+                                <p>Published Service</p>
+                            </a>
+                        </li> 
+                        <li class="nav-item">
+                             <a href="#" class="nav-link" name="menu" menucode="acccount">
+                                <i class="nav-icon bi bi-people"></i>
+                                <p>Accounts</p>
+                            </a>
+                        </li> 
+                        <li class="nav-item">
+                             <a href="#" class="nav-link" name="menu" menucode="settings">
+                                <i class="nav-icon bi bi-gear"></i>
+                                <p>Settings</p>
                             </a>
                         </li> 
                        <!--  <li class="nav-item">
@@ -150,12 +162,12 @@ try {
                                 <p>Logout</p>
                             </a>
                         </li>
-                        <li class="nav-item d-flex align-items-center ms-3 mt-2">
+                        <!-- <li class="nav-item d-flex align-items-center ms-3 mt-2">
                           <div class="form-check m-0 ml-1">
                             <input class="form-check-input" type="checkbox" id="theme-mode" onclick="loadTheme()">
                             <label class="form-check-label text-white ms-2" for="theme-mode" id="theme-label">Theme</label>
                           </div>
-                        </li>
+                        </li> -->
                     </ul>
                 </nav>
             </div>

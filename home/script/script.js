@@ -40,10 +40,10 @@ $("#main-menu")
       $mainbreadcrumb = `<li class="breadcrumb-item active"></li>`;
       $file = "dirs/services/services.php";
       break;
-    case "logs":
+    case "settings":
       $maintitle = "Logs";
-      $mainbreadcrumb = `<li class="breadcrumb-item active">Add Member</li>`;
-      $file = "dirs/logs/logs.php";
+      $mainbreadcrumb = `<li class="breadcrumb-item active">Account Settings</li>`;
+      $file = "dirs/settings/settings.php";
     break;
     case "settings":
       $maintitle = "Account Settings";

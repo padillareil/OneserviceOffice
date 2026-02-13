@@ -18,13 +18,14 @@
   $Department   = $get_user['UserDepartment'];
   $CurrentPage  = $_POST['CurrentPage'] ?? 1;
   $PageSize     = $_POST['PageSize'] ?? 100;
+  $Search       = $_POST['Search'];
 
 
 try {
   $conn->beginTransaction();
 
-    $fetch_services = $conn->prepare("EXEC dbo.[POSTED_SERVICES] ?,?,?");
-    $fetch_services->execute([$Department , $CurrentPage,$PageSize]);
+    $fetch_services = $conn->prepare("EXEC dbo.[POSTED_SERVICES] ?,?,?,?");
+    $fetch_services->execute([$Department , $CurrentPage,$PageSize,$Search]);
     $get_srvs = $fetch_services->fetchAll(PDO::FETCH_ASSOC);
     $fetch_user->closeCursor();
 
