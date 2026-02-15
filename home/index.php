@@ -86,7 +86,7 @@ try {
                         <li class="nav-item">
                             <a href="#" class="nav-link active" name="menu" menucode="dashboard">
                                 <i class="nav-icon bi bi-grid"></i>
-                                <p>Dashboard</p>
+                                <p>Work Queue</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -105,6 +105,12 @@ try {
                              <a href="#" class="nav-link" name="menu" menucode="settings">
                                 <i class="nav-icon bi bi-gear"></i>
                                 <p>Settings</p>
+                            </a>
+                        </li> 
+                        <li class="nav-item">
+                             <a href="#" class="nav-link" name="menu" menucode="performance">
+                                <i class="nav-icon bi bi-graph-up-arrow"></i>
+                                <p>Report</p>
                             </a>
                         </li> 
                        <!--  <li class="nav-item">
