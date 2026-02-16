@@ -113,54 +113,6 @@ try {
                                 <p>Report</p>
                             </a>
                         </li> 
-                       <!--  <li class="nav-item">
-                             <a href="#" class="nav-link" name="menu" menucode="ho_office" data-bs-toggle="tooltip" data-bs-title="HO Management" data-bs-placement="right">
-                                <i class="nav-icon bi bi-buildings"></i>
-                                <p>HO Management</p>
-                            </a>
-                        </li> 
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" name="menu" menucode="report" data-bs-toggle="tooltip" data-bs-title="Branch Management" data-bs-placement="right">
-                                <i class="nav-icon bi bi-building-fill"></i>
-                                <p>Branch Management</p>
-                            </a>
-                         </li> 
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" name="menu" menucode="report" data-bs-toggle="tooltip" data-bs-title="Ticket Management" data-bs-placement="right">
-                                <i class="nav-icon bi bi-chat-square-text"></i>
-                                <p>Ticket Management</p>
-                            </a>
-                        </li> 
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" name="menu" menucode="report" data-bs-toggle="tooltip" data-bs-title="KPI Performance" data-bs-placement="right">
-                                <i class="nav-icon bi bi-graph-up-arrow"></i>
-                                <p>KPI Performance</p>
-                            </a>
-                        </li> 
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" name="menu" menucode="logs" data-bs-toggle="tooltip" data-bs-title="Activity Logs" data-bs-placement="right">
-                                <i class="nav-icon bi bi-table"></i>
-                                <p>Logs</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" name="menu" menucode="member" data-bs-toggle="tooltip" data-bs-title="Add Member" data-bs-placement="right">
-                                <i class="nav-icon bi bi-person-plus"></i>
-                                <p>Add Member</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" name="menu" menucode="settings" data-bs-toggle="tooltip" data-bs-title="Settings" data-bs-placement="right">
-                                <i class="nav-icon bi bi-gear"></i>
-                                <p>Settings</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" data-bs-toggle="tooltip" data-bs-title="Help" data-bs-placement="right">
-                                <i class="nav-icon bi bi-question-circle"></i>
-                                <p>Help</p>
-                            </a>
-                        </li> -->
                         <hr>
                         <li class="nav-item">
                             <a href="#" class="nav-link" onclick="logout()">
@@ -168,17 +120,11 @@ try {
                                 <p>Logout</p>
                             </a>
                         </li>
-                        <!-- <li class="nav-item d-flex align-items-center ms-3 mt-2">
-                          <div class="form-check m-0 ml-1">
-                            <input class="form-check-input" type="checkbox" id="theme-mode" onclick="loadTheme()">
-                            <label class="form-check-label text-white ms-2" for="theme-mode" id="theme-label">Theme</label>
-                          </div>
-                        </li> -->
                     </ul>
                 </nav>
             </div>
             <input type="hidden" value="<?php echo $user['Theme'];?>" id="theme-pref">
-            <input type="hidden" value="<?php echo $user['Username'];?>" id="session-user">
+            <input type="hidden" value="<?php echo $user['Uid'];?>" id="session-user">
         </aside>
     </div>
     <div class="content-wrapper">

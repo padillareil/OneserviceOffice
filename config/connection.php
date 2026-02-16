@@ -5,6 +5,11 @@
     $username = "sa";
     $password = "SB1Admin";
 
+    $PCName = "";
+    $IP_Address = "";
+    $Browser = "";
+
+
     try {
         $conn = new PDO("sqlsrv:server=$servername;database=$database;TrustServerCertificate=true", $username, $password);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

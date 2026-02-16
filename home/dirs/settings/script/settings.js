@@ -7,8 +7,147 @@ function loadSettings() {
     $.post("dirs/settings/components/main.php", {
     }, function (data){
         $("#loadSettings").html(data);
+        loadUserinfo();
     });
 }
+
+
+/*Function show userinformation*/
+function loadUserinfo(){
+    $.post("dirs/settings/actions/get_userinfo.php",{
+    },function(data){
+        response = JSON.parse(data);
+        if(jQuery.trim(response.isSuccess) == "success"){
+            $("#user-fullname").val(response.Data.UserFullname);
+            $("#user-position").val(response.Data.UserJobPosition);
+            $("#user-theme").val(response.Data.Theme);
+        }else{
+            alert(jQuery.trim(response.Data));
+        }
+    });
+}
+
+/*Function show modal for change security*/
+function changeSecurity() {
+    $("#mdl-change-pass").modal('show');
+}
+
+
+/*Function show passwor*/
+function showPassword() {
+    const passwordField = document.getElementById('new-password');
+    const checkbox = document.getElementById('show-password');
+    passwordField.type = checkbox.checked ? 'text' : 'password';
+}
+
+
+
+/*Function for updateing change password*/
+$("#frm-change-password").submit(function(event) {
+    event.preventDefault();
+    var Password = $("#new-password").val();
+    $.post("dirs/settings/actions/update_password.php", {
+        Password: Password
+    }, function(data) {
+        data = $.trim(data);
+        if (data === "success") {
+            loadSettings();
+            Swal.fire({
+                icon: 'success',
+                title: 'Security Update',
+                text: 'Success.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            $("#frm-change-password")[0].reset();
+            $("#mdl-change-pass").modal('hide');
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops',
+                text: data,
+                timer: 3000,
+                showConfirmButton: false
+            });
+        }
+    });
+});
+
+
+
+/*Function show modal for change landline*/
+function changeLandline(){
+    $("#mdl-change-contact").modal('show');
+    $.post("dirs/settings/actions/get_landline.php",{
+    },function(data){
+        response = JSON.parse(data);
+        if(jQuery.trim(response.isSuccess) == "success"){
+            $("#landline").val(response.Data.Landline);
+            $("#mobile").val(response.Data.MobileNumber);
+        }else{
+            alert(jQuery.trim(response.Data));
+        }
+    });
+}
+
+
+
+/*Function for updateing change department contacts*/
+$("#frm-change-contact").submit(function(event) {
+    event.preventDefault();
+    var Landline = $("#landline").val();
+    var Mobile = $("#mobile").val();
+    $.post("dirs/settings/actions/update_contacts.php", {
+        Landline: Landline,
+        Mobile: Mobile
+    }, function(data) {
+        data = $.trim(data);
+        if (data === "success") {
+            loadSettings();
+            Swal.fire({
+                icon: 'success',
+                title: 'Department Contacts Update',
+                text: 'Success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            $("#frm-change-contact")[0].reset();
+            $("#mdl-change-contact").modal('hide');
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops',
+                text: data,
+                timer: 3000,
+                showConfirmButton: false
+            });
+        }
+    });
+});
+
+
+
+
+/*Function change theme*/
+// function changeTheme(themeValue) {
+//     $.post("dirs/settings/actions/update_theme.php", {
+//         Theme: themeValue // Key must be Theme
+//     }, function(data) {
+//         if(jQuery.trim(data) === "success") {
+//         } else {
+//             Swal.fire({
+//                 icon: 'warning',
+//                 title: 'Oops',
+//                 text: data,
+//                 timer: 3000,
+//                 showConfirmButton: false
+//             });
+//         }
+//     });
+// }
+
+
+
 
 // function load_modal(valueStudentID, valueOperation){
 //     $("#modal-add-student").modal('show');
