@@ -8,6 +8,7 @@ function loadSettings() {
     }, function (data){
         $("#loadSettings").html(data);
         loadUserinfo();
+        loadUserLogs();
     });
 }
 
@@ -124,6 +125,154 @@ $("#frm-change-contact").submit(function(event) {
         }
     });
 });
+
+
+
+
+
+
+    var currentPage = 1;
+    var pageSize = 100;
+    var totalPages = 1;
+    var display = $("#user_logs");
+
+    function loadUserLogs(page = 1) {
+        var Search = $("#search-logs").val();
+        $.post("dirs/settings/actions/get_logs.php", {
+            CurrentPage: page,
+            PageSize: pageSize,
+            Search: Search
+        }, function(data) {
+            var response;
+            try {
+                response = JSON.parse(data);
+            } catch (e) {
+                toastr.error("Server error.", "Error");
+                return;
+            }
+            if ($.trim(response.isSuccess) === "success") {
+                displayServices(response.Data);
+                currentPage = page;
+
+                if (response.Data && response.Data.length > 0) {
+                    totalPages = parseInt(response.Data[0].TotalPages);
+                } else {
+                    totalPages = 1;
+                }
+                buildPageNumLogs();      
+                updatePaginationLogs();   
+            }
+             else {
+                toastr.error($.trim(response.Data), "Error");
+            }
+        });
+    }
+
+
+    /* Render Blocked Accounts into Table */
+    function displayServices(data) {
+        const display = $("#user_logs");
+        display.empty();
+
+        if (!data || data.length === 0) {
+            display.html(`
+                <div class="col-12 text-center text-muted py-4">
+                    <i class="bi bi-file-earmark-text fs-3"></i><br>
+                    No Services Found.
+                </div>
+            `);
+            return;
+        }
+
+        data.forEach(srv => {
+
+            // Determine badge style
+            let badgeClass = '';
+            let textClass  = '';
+
+            if (srv.Remarks === 'Success') {
+                badgeClass = 'bg-success-subtle';
+                textClass  = 'text-success';
+            } else {
+                badgeClass = 'bg-danger-subtle';
+                textClass  = 'text-danger';
+            }
+
+            display.append(`
+                <a href="#" class="list-group-item list-group-item-action py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge ${badgeClass} ${textClass} me-2">
+                                ${srv.Remarks}
+                            </span>
+                        </div>
+                        <small class="text-muted">${srv.DocDate}</small>
+                    </div>
+                    <div class="small text-muted mt-1">
+                        PC: ${srv.PcName} • IP: ${srv.IP_Address}
+                    </div>
+                </a>
+            `);
+        });
+    }
+
+
+
+    /* Pagination + Fetch Blocked Accounts */
+    $("#btn-preview").on("click", function(e) {
+        e.preventDefault();
+
+        if (currentPage > 1) {
+            loadUserLogs(currentPage - 1);
+        }
+    });
+
+    $("#btn-next").on("click", function(e) {
+        e.preventDefault();
+
+        if (currentPage < totalPages) {
+            loadUserLogs(currentPage + 1);
+        }
+    });
+
+    $("#pagination").on("click", ".page-number a", function(e) {
+        e.preventDefault();
+        var page = parseInt($(this).data("page"));
+        loadUserLogs(page);
+    });
+
+    /*Function to count page number page 1 of and so on*/
+    function updatePaginationLogs() {
+        $("#page-info").text("Page " + currentPage + " of " + totalPages);
+        if (currentPage <= 1) {
+            $("#li-prev").addClass("disabled");
+        } else {
+            $("#li-prev").removeClass("disabled");
+        }
+        if (currentPage >= totalPages) {
+            $("#li-next").addClass("disabled");
+        } else {
+            $("#li-next").removeClass("disabled");
+        }
+    }
+
+    /*Function to build list of pagination*/
+    function buildPageNumLogs() {
+        $("#pagination li.page-number").remove(); // remove old numbers
+        var prevLi = $("#btn-preview").parent();
+        for (var i = 1; i <= totalPages; i++) {
+            var activeClass = (i === currentPage) ? "active" : "";
+            var li = `
+                <li class="page-item page-number ${activeClass}">
+                    <a class="page-link" href="#" data-page="${i}">${i}</a>
+                </li>
+            `;
+            $(li).insertAfter(prevLi);
+            prevLi = prevLi.next();
+        }
+    }
+
+
 
 
 

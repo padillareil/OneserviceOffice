@@ -4,7 +4,6 @@
     $database = "IAP_HELPDESK";
     $username = "sa";
     $password = "SB1Admin";
-
     $PCName = "";
     $IP_Address = "";
     $Browser = "";

@@ -77,18 +77,18 @@ try {
                         <li class="nav-item">
                             <p class="text-muted">Menu</p>
                         </li>
-                       <!--  <li class="nav-item">
-                            <a href="#" class="nav-link active" name="menu" menucode="create_account" data-bs-toggle="tooltip" data-bs-title="Create Account" data-bs-placement="right">
-                                <i class="nav-icon bi bi-grid"></i>
-                                <p>Create Account</p>
-                            </a>
-                        </li> -->
                         <li class="nav-item">
                             <a href="#" class="nav-link active" name="menu" menucode="dashboard">
                                 <i class="nav-icon bi bi-grid"></i>
                                 <p>Work Queue</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                             <a href="#" class="nav-link" name="menu" menucode="apply_service">
+                                <i class="nav-icon bi bi-stickies"></i>
+                                <p>Available Services</p>
+                            </a>
+                        </li> 
                         <li class="nav-item">
                              <a href="#" class="nav-link" name="menu" menucode="services">
                                 <i class="nav-icon bi bi-stickies"></i>

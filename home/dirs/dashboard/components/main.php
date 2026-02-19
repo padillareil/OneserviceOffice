@@ -1,40 +1,81 @@
-<ul class="nav nav-tabs mt-2" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active fs-6" id="new-tab" data-bs-toggle="tab" data-bs-target="#new" type="button" role="tab">
-      New ticket view
-    </button>
-  </li>
+<div class="card card-shadow border-0 rounded-4 mt-2">
+  <div class="card-header bg-white border-bottom">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
 
-  <li class="nav-item" role="presentation">
-    <button class="nav-link fs-6" id="open-tab" data-bs-toggle="tab" data-bs-target="#open" type="button" role="tab">
-      Open Tickets
-    </button>
-  </li>
+      <!-- Left Side: Filters -->
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <select class="form-select form-select-sm" style="width: 160px;">
+          <option selected disabled>Branch</option>
+        </select>
+        <select class="form-select form-select-sm" style="width: 160px;">
+          <option selected disabled>Department</option>
+        </select>
 
-  <li class="nav-item" role="presentation">
-    <button class="nav-link fs-6" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
-      All Tickets
-    </button>
-  </li>
-</ul>
+        <input type="search" name="search-tickets" id="search-tickets" class="form-control form-control-sm" placeholder="Search tickets..." style="width: 200px;">
 
+        <div class="d-flex align-items-center gap-1">
+          <input type="date" name="date-from" id="date-from" class="form-control form-control-sm">
+          <span class="small text-muted">to</span>
+          <input type="date" name="date-to" id="date-to" class="form-control form-control-sm">
+        </div>
 
+      </div>
 
-<div class="tab-content mt-3">
-  <div class="tab-pane fade show active" id="new" role="tabpanel">
-    <?php include 'newtickets.php';  ?>
+      <!-- Right Side: Actions -->
+      <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-success btn-sm" type="button">
+          Apply
+        </button>
+        <button class="btn btn-outline-primary btn-sm" type="button" onclick="loadDashboard()">
+          <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
+      </div>
+    </div>
   </div>
 
-  <div class="tab-pane fade" id="open" role="tabpanel">
-    <?php include 'opentickets.php';  ?>
-  </div>
+  <div class="card-body">
+    <div class="table-responsived">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>First</th>
+            <th>Last</th>
+            <th>Handle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="5" class="text-center py-5">
+              <div class="d-flex flex-column align-items-center text-muted">
+                <div class="mb-3" style="font-size: 40px; opacity: .35;">
+                  <i class="fa fa-file"></i>
+                </div>
+                <div class="fw-semibold">No Queue Ticket Available.</div>
+                <div class="small opacity-75">
+                  Please reload if no available tickets displayed.
+                </div>
+              </div>
+            </td>
+          </tr>
 
-  <div class="tab-pane fade" id="all" role="tabpanel">
-    <?php include 'alltickets.php';  ?>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer">
+    <nav>
+        <ul class="pagination" id="pagination">
+            <li class="page-item">
+                <a class="page-link" href="#" id="btn-preview">Previous</a> <!-- Page list number -->
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#" id="btn-next">Next</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div id="page-info" class="mt-3 small text-muted">  <!-- Page number counting -->
+    </div>
   </div>
 </div>
-
-
-
-
-<input type="text" id="ticket-id">

@@ -59,60 +59,16 @@
             <!-- Header -->
             <div class="card-header fw-semibold">
               Login Logs
+                <input type="search" name="search-logs" id="search-logs" class="form-control" placeholder="Search">
+
             </div>
 
             <!-- Scroll Body -->
             <div class="card-body p-0" style="height:30vh; overflow:auto;">
 
               <div class="list-group list-group-flush">
-
+                <div id="user_logs"></div>
                 <!-- ITEM -->
-                <a href="#" class="list-group-item list-group-item-action py-3">
-
-                  <!-- Row 1 -->
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <span class="badge bg-success-subtle text-success me-2">Success</span>
-                      <strong>Login</strong>
-                    </div>
-                    <small class="text-muted">2026-02-16 09:14 AM</small>
-                  </div>
-
-                  <!-- Row 2 -->
-                  <div class="small text-muted mt-1">
-                    PC: DESKTOP-A102 • IP: 192.168.1.25
-                  </div>
-
-                  <!-- Row 3 -->
-                  <div class="small text-muted">
-                    Chrome • Windows 11
-                  </div>
-
-                </a>
-
-                <!-- ITEM -->
-               <a href="#" class="list-group-item list-group-item-action py-3">
-
-                 <!-- Row 1 -->
-                 <div class="d-flex justify-content-between align-items-center">
-                   <div>
-                     <span class="badge bg-danger-subtle text-danger me-2">Error</span>
-                     <strong>Login</strong>
-                   </div>
-                   <small class="text-muted">2026-02-16 12:42 PM</small>
-                 </div>
-
-                 <!-- Row 2 -->
-                 <div class="small text-muted mt-1">
-                   PC: DESKTOP-A102 • IP: 192.168.1.25
-                 </div>
-
-                 <!-- Row 3 -->
-                 <div class="small text-muted">
-                   Session: 3h 18m
-                 </div>
-
-               </a>
 
 
                 <!-- repeat items here -->
@@ -226,14 +182,10 @@
 
 
 <script>
-    var Theme = '';
-    var Dark = 0;
-    var Light = 1;
-
-    $("#preference-display").on("change", function() {
-        var themeValue = $(this).is(":checked") ? Dark : Light;
-        Theme = themeValue;
-        changeTheme(Theme);
-    });
-
+  /*Search post*/
+  $("#search-logs").on("keydown", function(e) {
+      if (e.key === "Enter") {
+          loadUserLogs();
+      }
+  });
 </script>

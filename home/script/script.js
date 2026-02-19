@@ -31,7 +31,7 @@ $("#main-menu")
 
   switch (menucode) {
     case "dashboard":
-      $maintitle = "Tickets";
+      $maintitle = "";
       $mainbreadcrumb = `<li class="breadcrumb-item active">Dashboard</li>`;
       $file = "dirs/dashboard/dashboard.php";
       break;
@@ -39,6 +39,11 @@ $("#main-menu")
       $maintitle = "Services";
       $mainbreadcrumb = `<li class="breadcrumb-item active"></li>`;
       $file = "dirs/services/services.php";
+      break;
+    case "apply_service":
+      $maintitle = "";
+      $mainbreadcrumb = `<li class="breadcrumb-item active"></li>`;
+      $file = "dirs/apply_service/apply_service.php";
       break;
     case "accounts":
       $maintitle = "Staff Accounts";
