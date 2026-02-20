@@ -85,8 +85,8 @@ try {
                         </li>
                         <li class="nav-item">
                              <a href="#" class="nav-link" name="menu" menucode="apply_service">
-                                <i class="nav-icon bi bi-stickies"></i>
-                                <p>Available Services</p>
+                                <i class="nav-icon bi bi-file-earmark-post"></i>
+                                <p>Services</p>
                             </a>
                         </li> 
                         <li class="nav-item">
@@ -107,12 +107,12 @@ try {
                                 <p>Settings</p>
                             </a>
                         </li> 
-                        <li class="nav-item">
+                       <!--  <li class="nav-item">
                              <a href="#" class="nav-link" name="menu" menucode="performance">
                                 <i class="nav-icon bi bi-graph-up-arrow"></i>
                                 <p>Report</p>
                             </a>
-                        </li> 
+                        </li>  -->
                         <hr>
                         <li class="nav-item">
                             <a href="#" class="nav-link" onclick="logout()">

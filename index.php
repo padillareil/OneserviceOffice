@@ -27,7 +27,7 @@ try {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OneService</title>
+  <title>OneService-Encoder</title>
   <link rel="stylesheet" href="assets/plugins/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" type="text/css" href="assets/plugins/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="assets/css/adminlte.min.css">
@@ -67,11 +67,10 @@ try {
         <aside class="main-sidebar sidebar-dark-info elevation-5">
             <p class="text-center brand-link">
                 <a href="index.php" style="text-decoration: none; color: inherit;">
-                    <img src="assets/image/logo/favicon.png" alt="iServe Admin" id="profile-image"style="width: 100px; height: 100px; object-fit: cover;">
+                    <img src="assets/image/logo/favicon.png" alt="User Logo" id="profile-image"style="width: 100px; height: 100px; object-fit: cover;">
                     <br>
                 </a>
                 <br>
-                <?php echo $user['Position']?>
             </p>
             <div class="sidebar">
                 <nav id="main-menu" class="mt-2">
@@ -79,22 +78,16 @@ try {
                         <li class="nav-item">
                             <p class="text-muted">Menu</p>
                         </li>
-                       <!--  <li class="nav-item">
-                            <a href="#" class="nav-link active" name="menu" menucode="request" data-bs-toggle="tooltip" data-bs-title="Inbox" data-bs-placement="right">
-                                <i class="nav-icon bi bi-inbox"></i>
-                                <p>Inbox</p>
-                            </a>
-                        </li> -->
                         <li class="nav-item">
-                            <a href="#" class="nav-link active" name="menu" menucode="services">
-                                <i class="nav-icon bi bi-headset"></i>
-                                <p>Help Desk</p>
+                            <a href="#" class="nav-link active" name="menu" menucode="dashboard">
+                                <i class="nav-icon bi bi-grid"></i>
+                                <p>Work Queue</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link" name="menu" menucode="bookings">
-                                <i class="nav-icon bi bi-archive"></i>
-                                <p>Bookings</p>
+                            <a href="#" class="nav-link" name="menu" menucode="apply_service">
+                                <i class="nav-icon bi bi-file-earmark-post"></i>
+                                <p>Services</p>
                             </a>
                         </li>
                         <li class="nav-item">

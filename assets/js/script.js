@@ -29,26 +29,16 @@ $("#main-menu")
   let $mainbreadcrumb = "";
 
   switch (menucode) {
-    case "request":
-      $maintitle = "Overview";
-      $mainbreadcrumb = `<li class="breadcrumb-item active"></li>`;
-      $file = "dirs/request/request.php";
-      break;
-    case "services":
+    case "dashboard":
       $maintitle = "";
       $mainbreadcrumb = `<li class="breadcrumb-item active"></li>`;
-      $file = "dirs/services/services.php";
+      $file = "dirs/dashboard/dashboard.php";
       break;
-    case "bookings":
+    case "apply_service":
       $maintitle = "";
       $mainbreadcrumb = `<li class="breadcrumb-item active"></li>`;
-      $file = "dirs/bookings/bookings.php";
-    break;
-    case "logs":
-      $maintitle = "Logs";
-      $mainbreadcrumb = `<li class="breadcrumb-item active"></li>`;
-      $file = "dirs/logs/logs.php";
-    break;
+      $file = "dirs/apply_service/apply_service.php";
+      break;
     case "settings":
       $maintitle = "Account Settings";
       $mainbreadcrumb = `<li class="breadcrumb-item active">Settings</li>`;

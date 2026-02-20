@@ -1,38 +1,34 @@
 <?php
-  require_once "../../../config/connection.php";
+  require_once "../../../../config/connection.php";
+  require_once "../../../../config/functions.php";
   session_start();
 
+  $User     = $_SESSION['Uid'];
+
   if (!isset($_SESSION['Uid'])) {
-      header('Location: ../../../login.php');
+      header('Location: ../../../../login.php');
       exit();
   }
 
-  $User     = $_SESSION['Uid'];
-  $Req_id   = $_POST['Req_id'];
+  $Req_id     = $_POST['Req_id'];
+
 
 try {
   $conn->beginTransaction();
 
-    $fetch_details = $conn->prepare("
-      SELECT
-      Greetings,
-      Req_id,
-      ServiceCat,
-      Urgency,
-      Purpose,
-      Description,
-      Document
+    $fetch_ticket = $conn->prepare("
+      SELECT Req_id
       FROM request  
-      WHERE Req_id = ? 
+      WHERE Req_id = ?
     ");
-    $fetch_details->execute([ $Req_id ]);
-    $get_info = $fetch_details->fetch(PDO::FETCH_ASSOC);
+    $fetch_ticket->execute([ $Req_id ]);
+    $get_ticket = $fetch_ticket->fetch(PDO::FETCH_ASSOC);
 
   $conn->commit();
 
   $response = array(
     "isSuccess" => 'success',
-    "Data" => $get_info
+    "Data" => $get_ticket
   );
   echo json_encode($response);
 
