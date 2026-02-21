@@ -148,7 +148,7 @@ function filterDepartment(Department){
                             ${srv.ServiceType}
                           </span>
                         </div>
-                        <button class="btn btn-success" type="button" onclick="mdlServiceApply('${srv.ServiceType}')">Create Ticket</button>
+                        <button class="btn btn-success" type="button" onclick="mdlServiceApply('${srv.Srv_id}')">Create Ticket</button>
                       </div>
                     </div>
                   </div>
@@ -162,10 +162,61 @@ function filterDepartment(Department){
 
 
 
-/*Function modal Apply Ticket*/
-function mdlServiceApply() {
+/*function mdlServiceApply() {
     $("#mdl-create-ticket").modal('show');
 }
+*/
+
+    function showLoader() {
+        $('#card-loader').removeClass('d-none');
+        $('#card-content').addClass('d-none');
+    }
+
+    function hideLoader() {
+        $('#card-loader').addClass('d-none');
+        $('#card-content').removeClass('d-none');
+    }
+
+
+    async function mdlServiceApply(Srv_id) {
+        $("#mdl-create-ticket").modal('show');
+        $.post("dirs/apply_service/actions/get_tickets.php", {
+            Srv_id: Srv_id
+        })
+        .done(function (data) {
+            let response = JSON.parse(data);
+            if ($.trim(response.isSuccess) === "success") {
+                $("#ticket-subject").val(response.Data.ServiceName);
+                $("#ticket-id-number").val(response.Data.RowNum);
+                $("#type-of-request").val(response.Data.ServiceType);
+                $("#description").text(response.Data.Description);
+                $("#manager-position").text(response.Data.UserJobPosition);
+                $("#manager-department").text(response.Data.Department);
+                $("#manager-name").text(response.Data.UserFullname);
+                hideLoader();
+            } else {
+                showLoader();
+                alert($.trim(response.Data));
+            }
+        })
+        .fail(function () {
+            showLoader();
+            Swal.fire({
+                icon: "warning",
+                title: "Oops!",
+                text: "Please check, No internet connection.",
+                timer: 2000,
+                showConfirmButton: false
+            });
+
+        });
+
+    }
+
+
+
+
+
 // function load_modal(valueStudentID, valueOperation){
 //     $("#modal-add-student").modal('show');
 //     $("#frm-add-student").attr("operation", valueOperation);
