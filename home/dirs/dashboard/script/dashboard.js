@@ -136,19 +136,19 @@ function displayServices(data) {
                 statusBadge = `<span class="badge bg-light text-dark">${srv.TicketStatus}</span>`;
         }
         display.append(`
-            <tr onclick="loadContent('${srv.RowNum}')">
+            <tr>
                 <td>
                 <div class="form-check ml-3">
                   <input class="form-check-input text-lg border-primary" type="checkbox" value="" id="standby-action">
                 </div>
                 </td>
-                <td>${srv.TKTNumber}</td>
-                <td>${srv.RequestingOffice}</td>
-                <td>${srv.ServiceType}</td>
-                <td>${srv.Branch}</td>
-                <td>${srv.Department}</td>
-                <td>${formatDate(srv.DocDate)}</td>
-                <td class="text-center">${statusBadge}</td>
+                <td onclick="loadContent('${srv.RowNum}')">${srv.TKTNumber}</td>
+                <td onclick="loadContent('${srv.RowNum}')">${srv.RequestingOffice}</td>
+                <td onclick="loadContent('${srv.RowNum}')">${srv.ServiceType}</td>
+                <td onclick="loadContent('${srv.RowNum}')">${srv.Branch}</td>
+                <td onclick="loadContent('${srv.RowNum}')">${srv.Department}</td>
+                <td onclick="loadContent('${srv.RowNum}')">${formatDate(srv.DocDate)}</td>
+                <td onclick="loadContent('${srv.RowNum}')" class="text-center">${statusBadge}</td>
                 <td class ="text-center">
                     <div class="dropdown">
                       <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
