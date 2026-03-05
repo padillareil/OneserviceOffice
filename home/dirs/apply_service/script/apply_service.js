@@ -8,6 +8,8 @@ function loadApplyServices() {
     $.post("dirs/apply_service/components/main.php", {
     }, function (data){
         $("#load_ApplyServices").html(data);
+        loadDepartments();
+        loadPostService();
     });
 }
 
@@ -26,6 +28,194 @@ function loadresolved() {
 function loadreqCancel() {
     $("#mdl-req-cancelled").modal('show');
 }
+
+
+/*function load Departments*/
+function loadDepartments() {
+    $.post("dirs/apply_service/actions/get_departments.php", {}, function (data) {
+        const response = JSON.parse(data);
+        if (response.isSuccess === "success") {
+            const list = $("#departmentList");
+            list.find("li.nav-item:not(:first):not(:nth-child(2))").remove();
+            response.Data.forEach(dep => {
+                list.append(`
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"
+                           name="department"
+                           menucode="${dep.Department}">
+                            <i class="bi bi-diagram-3"></i>
+                            <p>${dep.Department}</p>
+                        </a>
+                    </li>
+                `);
+            });
+        } else {
+            alert(response.Data);
+        }
+    });
+}
+
+/*Function to get the department value for filtering*/
+function filterDepartment(Department){
+    $.post("dirs/apply_service/actions/get_department.php",{
+        Department : Department
+    },function(data){
+        response = JSON.parse(data);
+        if(jQuery.trim(response.isSuccess) == "success"){
+            $("#department-filtered").val(response.Data.Department);
+            loadPostService();
+        }else{
+            alert(jQuery.trim(response.Data));
+        }
+    });
+}
+
+
+    var currentPage = 1;
+    var pageSize = 100;
+    var display = $("#posted_service");
+    function loadPostService(page = 1, status = null) {
+        var Search = $("#search-services").val();
+        var Department = $("#department-filtered").val();
+        $.post("dirs/apply_service/actions/get_services.php", {
+            CurrentPage: page,
+            PageSize: pageSize,
+            Search : Search,
+            Department : Department,
+        }, function(data) {
+            let response;
+            try {
+                response = JSON.parse(data);
+            } catch (e) {
+                toastr.error("Server error.", "Error");
+                return;
+            }
+
+            if ($.trim(response.isSuccess) === "success") {
+                displayServices(response.Data);
+                currentPage = page;
+            } else {
+                toastr.error($.trim(response.Data), "Error");
+            }
+        });
+    }
+
+    /* Render Blocked Accounts into Table */
+    function displayServices(data) {
+        const display = $("#posted_service");
+        display.empty();
+
+        if (!data || data.length === 0) {
+            display.html(`
+                <div class="col-12 text-center text-muted py-4">
+                    <i class="bi bi-file-earmark-text fs-3"></i><br>
+                    No Services Found.
+                </div>
+            `);
+            return;
+        }
+
+        data.forEach(srv => {
+            let statusBadge = `
+                <span class="badge bg-primary mb-2 align-self-start">
+                    OPEN
+                </span>
+            `;
+            if (parseInt(srv.ServiceStatus) === 2) {
+                statusBadge = `
+                    <span class="badge bg-danger mt-2 align-self-start">
+                        CLOSED
+                    </span>
+                `;
+            }
+            display.append(`
+                <div class="col-sm-3 mb-3">
+                  <div class="card h-100 border-0 card-shadow rounded-4 service-card">
+                    <div class="card-body d-flex flex-column p-4">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold mb-0 text-dark">
+                          ${srv.ServiceName}
+                        </h5>
+                        ${statusBadge}
+                      </div>
+                      <hr>
+                      <p class="text-muted mb-3">
+                        ${srv.Description}
+                      </p>
+                      <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div class="d-flex gap-2">
+                          <span class="badge bg-light text-secondary border">
+                            ${srv.ServiceType}
+                          </span>
+                        </div>
+                        <button class="btn btn-success" type="button" onclick="mdlServiceApply('${srv.Srv_id}')">Create Ticket</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            `);
+        });
+    }
+
+
+
+
+
+
+/*function mdlServiceApply() {
+    $("#mdl-create-ticket").modal('show');
+}
+*/
+
+    function showLoader() {
+        $('#card-loader').removeClass('d-none');
+        $('#card-content').addClass('d-none');
+    }
+
+    function hideLoader() {
+        $('#card-loader').addClass('d-none');
+        $('#card-content').removeClass('d-none');
+    }
+
+
+    async function mdlServiceApply(Srv_id) {
+        $("#mdl-create-ticket").modal('show');
+        $.post("dirs/apply_service/actions/get_tickets.php", {
+            Srv_id: Srv_id
+        })
+        .done(function (data) {
+            let response = JSON.parse(data);
+            if ($.trim(response.isSuccess) === "success") {
+                $("#ticket-subject").val(response.Data.ServiceName);
+
+                $("#type-of-request").val(response.Data.ServiceType);
+                $("#description").text(response.Data.Description);
+                $("#manager-position").text(response.Data.UserJobPosition);
+                $("#manager-department").text(response.Data.Department);
+                $("#manager-name").text(response.Data.UserFullname);
+                $("#ticket-id-number").val(response.Data.RowNum);
+                hideLoader();
+            } else {
+                showLoader();
+                alert($.trim(response.Data));
+            }
+        })
+        .fail(function () {
+            showLoader();
+            Swal.fire({
+                icon: "warning",
+                title: "Oops!",
+                text: "Please check, No internet connection.",
+                timer: 2000,
+                showConfirmButton: false
+            });
+
+        });
+
+    }
+
+
+
 
 
 // function load_modal(valueStudentID, valueOperation){

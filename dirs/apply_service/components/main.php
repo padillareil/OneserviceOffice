@@ -153,7 +153,7 @@
 	    const menucode = $(this).attr("menucode");
 	    switch (menucode) {
 	      case "all":
-	        loadDepartments(); 
+	        loadApplyServices(); 
 	        break;
 
 	      default:

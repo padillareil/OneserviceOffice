@@ -1,5 +1,5 @@
 <!-- Modal Request Queue -->
-<!-- <div class="modal fade" id="mdl-req-queue" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="team-req-mdl-title" aria-hidden="true">
+<div class="modal fade" id="mdl-req-queue" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="team-req-mdl-title" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
@@ -75,11 +75,11 @@
       </div>
     </div>
   </div>
-</div> -->
+</div>
 
 
 <!-- Resolved Ticekts Modal -->
-<!-- <div class="modal fade" id="mdl-req-resolved" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="team-req-mdl-title" aria-hidden="true">
+<div class="modal fade" id="mdl-req-resolved" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="team-req-mdl-title" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
@@ -157,10 +157,10 @@
     </div>
   </div>
 </div>
- -->
+
 
 <!-- Resolved Ticekts Modal -->
-<!-- <div class="modal fade" id="mdl-req-cancelled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="team-req-mdl-title" aria-hidden="true">
+<div class="modal fade" id="mdl-req-cancelled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="team-req-mdl-title" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
@@ -237,7 +237,7 @@
       </div>
     </div>
   </div>
-</div> -->
+</div>
 
 
 <!-- Modal Apply Ticket -->
@@ -296,7 +296,7 @@
                   </div>
                 </div>
               </div>
-              <textarea id="ticket-description" class="form-control" placeholder="Describe your info here..." required style="height: 20vh;"></textarea>
+              <textarea id="ticket-description" name="ticket-description" class="form-control" placeholder="Describe your info here..." required style="height: 20vh;"></textarea>
               <div class="mt-3">
                   <label class="form-label fw-semibold d-block" for="ticket-attachment">
                     Attachment: <span class="text-danger"><i>(Optional Only if needed.)</i></span>

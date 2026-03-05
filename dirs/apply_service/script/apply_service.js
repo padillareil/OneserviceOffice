@@ -187,12 +187,13 @@ function filterDepartment(Department){
             let response = JSON.parse(data);
             if ($.trim(response.isSuccess) === "success") {
                 $("#ticket-subject").val(response.Data.ServiceName);
-                $("#ticket-id-number").val(response.Data.RowNum);
+
                 $("#type-of-request").val(response.Data.ServiceType);
                 $("#description").text(response.Data.Description);
                 $("#manager-position").text(response.Data.UserJobPosition);
                 $("#manager-department").text(response.Data.Department);
                 $("#manager-name").text(response.Data.UserFullname);
+                $("#ticket-id-number").val(response.Data.RowNum);
                 hideLoader();
             } else {
                 showLoader();

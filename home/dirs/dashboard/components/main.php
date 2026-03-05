@@ -35,7 +35,7 @@
 
   <div class="card-body">
     <div class="table-responsive overscroll-auto" style="height: 55vh;">
-      <table class="table table-sm table-hovered">
+      <table class="table table-bordered table-hovered">
         <thead>
           <tr>
             <th style="width:40px;"></th> <!-- checkbox or expand -->
@@ -49,7 +49,7 @@
             <th style="width:120px;">Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="service_request">
           <tr>
             <td colspan="9" class="text-center py-5">
               <div class="d-flex flex-column align-items-center text-muted">
@@ -84,3 +84,38 @@
     </div>
   </div>
 </div>
+
+
+<script>
+  /*Script for Searching ticket*/
+  $("#search-tickets").on("keydown", function(e) {
+      if (e.key === "Enter") {
+          loadPostService();
+      }
+  });
+  /* Pagination + Fetch Blocked Accounts */
+  $("#btn-preview").on("click", function(e) {
+      e.preventDefault();
+
+      if (currentPage > 1) {
+          loadPostService(currentPage - 1);
+      }
+  });
+
+  $("#btn-next").on("click", function(e) {
+      e.preventDefault();
+
+      if (currentPage < totalPages) {
+          loadPostService(currentPage + 1);
+      }
+  });
+
+  $("#pagination").on("click", ".page-number a", function(e) {
+      e.preventDefault();
+      var page = parseInt($(this).data("page"));
+      loadPostService(page);
+  });
+</script>
+
+
+

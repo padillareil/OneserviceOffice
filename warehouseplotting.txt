@@ -1,6 +1,0 @@
-Warehouse registry plotting
-
-Branch
-WhsCode
-Itemlocation
-

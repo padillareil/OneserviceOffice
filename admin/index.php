@@ -64,7 +64,7 @@ try {
                 </li>
             </ul>
         </nav>
-        <aside class="main-sidebar sidebar-dark-danger elevation-5">
+        <aside class="main-sidebar sidebar-dark-olive elevation-5">
             <p class="text-center brand-link">
                 <a href="index.php" style="text-decoration: none; color: inherit;">
                     <img src="../assets/image/logo/favicon.png" alt="iServe Admin" id="profile-image"style="width: 100px; height: 100px; object-fit: cover;">

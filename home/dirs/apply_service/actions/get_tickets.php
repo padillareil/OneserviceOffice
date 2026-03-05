@@ -1,21 +1,26 @@
 <?php
   require_once "../../../../config/connection.php";
-  session_start();
 
-  $User = $_SESSION['Uid'];
+  $Srv_id = $_POST['Srv_id'];
 
 try {
   $conn->beginTransaction();
 
-    $fetch_tickets = $conn->prepare("EXEC dbo.[DEPARTMENT_TICKET] ?");
-    $fetch_tickets->execute([ $User ]);
-    $get_ticket = $fetch_tickets->fetch(PDO::FETCH_ASSOC);
+    $fetch_tickets = $conn->prepare("
+      SELECT 
+      s.RowNum, s.Department, s.ServiceName, s.ServiceType, s.Description, u.UserFullname, u.UserJobPosition
+      FROM SRVCS s
+      LEFT JOIN UserAccount u ON u.Uid = s.Usr_Posted  
+      WHERE RowNum = ?
+    ");
+    $fetch_tickets->execute([ $Srv_id ]);
+    $get_tickets = $fetch_tickets->fetch(PDO::FETCH_ASSOC);
 
   $conn->commit();
 
   $response = array(
     "isSuccess" => 'success',
-    "Data" => $get_ticket
+    "Data" => $get_tickets
   );
   echo json_encode($response);
 

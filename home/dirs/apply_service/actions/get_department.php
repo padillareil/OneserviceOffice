@@ -1,21 +1,30 @@
 <?php
   require_once "../../../../config/connection.php";
   session_start();
+  $User     = $_SESSION['Uid'];
 
-  $User = $_SESSION['Uid'];
+  if (!isset($_SESSION['Uid'])) {
+      header('Location: ../../../login.php');
+      exit();
+  }
+
+  $Department = $_POST['Department'];
+
 
 try {
   $conn->beginTransaction();
 
-    $fetch_tickets = $conn->prepare("EXEC dbo.[DEPARTMENT_TICKET] ?");
-    $fetch_tickets->execute([ $User ]);
-    $get_ticket = $fetch_tickets->fetch(PDO::FETCH_ASSOC);
+    $fetch_department = $conn->prepare("
+      SELECT  Department AS Department FROM SRVCS WHERE Department = ? GROUP BY Department
+    ");
+    $fetch_department->execute([ $Department ]);
+    $get_dp = $fetch_department->fetch(PDO::FETCH_ASSOC);
 
   $conn->commit();
 
   $response = array(
     "isSuccess" => 'success',
-    "Data" => $get_ticket
+    "Data" => $get_dp
   );
   echo json_encode($response);
 
