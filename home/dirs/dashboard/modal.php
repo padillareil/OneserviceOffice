@@ -57,8 +57,8 @@
   <div class="modal fade" id="mdl-ticket-content" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="mdl-title-request" aria-hidden="true">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="mdl-title-request">Ticket Request</h1>
+        <div class="modal-header bg-secondary-subtle">
+          <h1 class="modal-title fs-5" id="mdl-ticket-number"></h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -92,7 +92,7 @@
                 </div>
               </div>
 
-              <input type="hidden" id="ticket-id-number"><!-- Ticket number -->
+              <input type="text" id="ticket-id-number"><!-- Ticket number -->
 
               <div class="row justify-content-between d-flex">
                 <div class="col-md-4">
@@ -108,10 +108,48 @@
                   </div>
                 </div>
               </div>
-              <textarea id="ticket-description" name="ticket-description" class="form-control" placeholder="Describe your info here..." required style="height: 20vh;"></textarea>
+              <small>Message Content:</small>
+              <textarea  id="tikcet-description" name="tikcet-description" class="form-control" style="height: 20vh;" readonly></textarea>
+              <div class="mt-2 d-none"  id="dowload-attachment">
+                <button class="btn btn-outline-danger">
+                  <i class="bi bi-download"></i> Download Attachment
+                </button>
+              </div>
+              <!-- Ticket Comment by user -->
+              <div class="mt-3 collapse" id="collapse-message">
+                  <small>Comment:</small>
+                  <textarea id="ticket_reply" name="ticket_reply" class="form-control" placeholder="Comment...." required style="height: 10vh;"></textarea>
+                  <button class="btn btn-success mt-2" type="button" id="btn-save-comment">Save</button>
+                  <button class="btn btn-secondary mt-2" type="button" id="btn-cancel-comment" data-bs-toggle="collapse"  href="#collapse-message">Cancel</button>
+              </div>
+
             </div>
           </div>
         </div>
+
+        <div class="modal-footer d-flex justify-content-between align-items-center">
+          <div>
+            <button class="btn btn-outline-primary" data-bs-toggle="collapse"  href="#collapse-message">
+              <i class="bi bi-chat-left-text"></i> Add Comment
+            </button>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-success" type="button" id="btn-approve" onclick="mdlApprovedPrompt()">
+              <i class="bi bi-check-circle"></i> Approve
+            </button>
+            <button class="btn btn-primary" type="button" id="btn-standby" onclick="mdlStandByPrompt()">
+              <i class="bi bi-stopwatch"></i> Stand By
+            </button>
+            <button class="btn btn-danger" type="button" id="btn-reject" onclick="mdlRejectPrompt()">
+              <i class="bi bi-x-circle"></i> Reject
+            </button>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+
+
       </div>
     </div>
   </div>
@@ -123,14 +161,68 @@
 
 <script>
   $(document).ready(function () {
-      $('#ticket-description').summernote({
+      $('#ticket_reply').summernote({
           height: 250,
-          placeholder: 'Describe your info here...',
+          placeholder: 'Comment....',
           toolbar: [
             ['style', ['bold', 'italic', 'underline']],  
             ['para', ['ul', 'ol']],                     
             ['insert', ['picture']]  
           ]
       });
+
+      $('#tikcet-description').summernote({
+          height: 250,
+          placeholder: 'Message Content',
+          toolbar: [
+            ['style', ['bold', 'italic', 'underline']],  
+            ['para', ['ul', 'ol']],                     
+            ['insert', ['picture']]  
+          ]
+      });
+      $('#tikcet-description').summernote('disable');
   });
 </script>
+
+<!-- MOdal Show All Client and Find -->
+<div class="modal fade" id="mdl-clients" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="-1" aria-labelledby="mdl-title-request" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-secondary-subtle">
+        <h1 class="modal-title fs-5">Client Master List</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+       <div class="card">
+         <div class="card-header py-2">
+           <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+             <div class="d-flex flex-wrap align-items-center gap-2">
+               <input type="search" name="search-clients" id="search-clients" class="form-control form-control-sm border-primary-subtle" placeholder="Search client..." style="width:200px;">
+
+               <select class="form-select form-select-sm border-primary-subtle" style="width:160px;" id="modal-iap-branch">
+                 <option selected disabled>Branch</option>
+                 <option value="">All</option>
+               </select>
+               <select class="form-select form-select-sm border-primary-subtle" style="width:160px;">
+                 <option selected disabled>Department</option>
+                 <option value="">All</option>
+               </select>
+             </div>
+             <!-- Right Action -->
+             <div>
+               <button class="btn btn-primary btn-sm">
+                 <i class="bi bi-arrow-clockwise"></i> Refresh
+               </button>
+             </div>
+           </div>
+         </div>
+         <div class="card-body">
+           
+         </div>
+       </div>
+
+      </div>
+    </div>
+  </div>
+</div>

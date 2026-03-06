@@ -4,20 +4,32 @@
 
       <!-- Left Side: Filters -->
       <div class="d-flex flex-wrap align-items-center gap-2">
-        <select class="form-select form-select-sm" style="width: 160px;">
+        <input type="search" name="search-tickets" id="search-tickets" class="form-control border-primary-subtle form-control-sm" placeholder="Search tickets..." style="width: 200px;">
+        <select class="form-select form-select-sm border-primary-subtle" style="width: 160px;" id="iap-branch-dashboard">
           <option selected disabled>Branch</option>
         </select>
-        <select class="form-select form-select-sm" style="width: 160px;">
-          <option selected disabled>Department</option>
+        <select class="form-select form-select-sm border-primary-subtle" style="width: 160px;" id="ticket-filter-status">
+          <option selected disabled>Status</option>
+          <option value="">All</option>
+          <option value="O">Open</option>
+          <option value="R">Resolved</option>
+          <option value="S">Stand By</option>
+          <option value="C">Cancelled</option>
+          <option value="X">Rejected</option>
         </select>
 
-        <input type="search" name="search-tickets" id="search-tickets" class="form-control form-control-sm" placeholder="Search tickets..." style="width: 200px;">
 
         <div class="d-flex align-items-center gap-1">
-          <input type="date" name="date-from" id="date-from" class="form-control form-control-sm">
+          <input type="date" name="date-from" id="date-from" class="form-control border-primary-subtle form-control-sm">
           <span class="small text-muted">to</span>
-          <input type="date" name="date-to" id="date-to" class="form-control form-control-sm">
+          <input type="date" name="date-to" id="date-to" class="form-control border-primary-subtle form-control-sm">
         </div>
+        <button class="btn btn-light btn-sm" type="button" id="btn-load-ticket-important">
+          <i class="bi bi-exclamation-circle text-warning"></i> Important
+        </button>
+        <button class="btn btn-light btn-sm" type="button" onclick="loadFindClient()">
+          <i class="bi bi-search"></i> Find Client
+        </button>
 
       </div>
 
@@ -29,6 +41,7 @@
         <button class="btn btn-outline-primary btn-sm" type="button" onclick="loadDashboard()">
           <i class="bi bi-arrow-clockwise"></i> Refresh
         </button>
+        
       </div>
     </div>
   </div>
@@ -37,16 +50,16 @@
     <div class="table-responsive overscroll-auto" style="height: 55vh;">
       <table class="table table-bordered table-hovered">
         <thead>
-          <tr>
-            <th style="width:40px;"></th> <!-- checkbox or expand -->
-            <th>Ticket No.</th>
-            <th>Client</th>
-            <th>Service</th>
-            <th>Branch</th>
-            <th>Department</th>
-            <th>Date Created</th>
-            <th>Status</th>
-            <th style="width:120px;">Action</th>
+          <tr class="table-secondary">
+            <th class="sticky-top" style="width:40px;"></th> <!-- checkbox or expand -->
+            <th class="sticky-top">Ticket No.</th>
+            <th class="sticky-top">Client</th>
+            <th class="sticky-top">Service</th>
+            <th class="sticky-top">Branch</th>
+            <th class="sticky-top">Department</th>
+            <th class="sticky-top text-center">Date Created</th>
+            <th class="sticky-top">Status</th>
+            <th class="sticky-top" style="width:120px;">Action</th>
           </tr>
         </thead>
         <tbody id="service_request">
@@ -102,6 +115,7 @@
       }
   });
 
+/*Function load all important tags tickets*/
   $("#btn-next").on("click", function(e) {
       e.preventDefault();
 
@@ -110,6 +124,19 @@
       }
   });
 
+  /*Function filter ticket status*/
+  $("#ticket-filter-status").on("change", function() {
+      loadPostService();
+  });
+
+  /*Function filter branch assignment*/
+  $("#iap-branch-dashboard").on("change", function() {
+      loadPostService();
+  });
+
+  $("#btn-load-ticket-important").on("click", function () {
+      loadPostService(1, 'Y');
+  });
   $("#pagination").on("click", ".page-number a", function(e) {
       e.preventDefault();
       var page = parseInt($(this).data("page"));

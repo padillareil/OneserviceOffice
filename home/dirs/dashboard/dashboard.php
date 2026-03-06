@@ -74,7 +74,7 @@
 
 
 
-
+<input type="hidden" id="side-ticket-number">
 
 <script src="dirs/dashboard/script/dashboard.js"></script>
 

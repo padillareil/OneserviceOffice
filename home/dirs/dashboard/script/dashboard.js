@@ -9,6 +9,7 @@ function loadDashboard() {
         $("#load_Dashboard").html(data);
         loadTicketStatus();
         loadPostService();
+        loadImperialAppliancesBranch();
         // loadRequest();
     });
 }
@@ -50,18 +51,24 @@ function loadTicketStatus() {
     });
 }
 
+
 /*Function Display all request tickets to your department*/
 var currentPage = 1;
 var pageSize = 20;
 var totalPages = 1;
 var display = $("#service_request");
 
-function loadPostService(page = 1) {
+function loadPostService(page = 1, Important = null) {
     var Search = $("#search-tickets").val();
+    var Status = $("#ticket-filter-status").val(); /*Type of Status Filter*/
+    var Branch = $("#iap-branch-dashboard").val();
     $.post("dirs/dashboard/actions/get_requestservices.php", {
         CurrentPage: page,
         PageSize: pageSize,
-        Search: Search
+        Search: Search,
+        Important: Important,
+        Status: Status,
+        Branch: Branch
     }, function(data) {
         var response;
         try {
@@ -135,20 +142,36 @@ function displayServices(data) {
             default:
                 statusBadge = `<span class="badge bg-light text-dark">${srv.TicketStatus}</span>`;
         }
+
+        // Determine Important check display
+        let statusCheckBox = '';
+
+        switch (srv.Important) {
+            case 'Y':
+                statusCheckBox = 'checked';
+                break;
+
+            case 'N':
+                statusCheckBox = '';
+                break;
+
+            default:
+                statusCheckBox = '';
+        }
         display.append(`
             <tr>
                 <td>
                 <div class="form-check ml-3">
-                  <input class="form-check-input text-lg border-primary" type="checkbox" value="" id="standby-action">
+                  <input class="form-check-input text-lg border-primary" type="checkbox" ${statusCheckBox} onchange="updateImportant('${srv.SysNum}', this)">
                 </div>
                 </td>
-                <td onclick="loadContent('${srv.RowNum}')">${srv.TKTNumber}</td>
-                <td onclick="loadContent('${srv.RowNum}')">${srv.RequestingOffice}</td>
-                <td onclick="loadContent('${srv.RowNum}')">${srv.ServiceType}</td>
-                <td onclick="loadContent('${srv.RowNum}')">${srv.Branch}</td>
-                <td onclick="loadContent('${srv.RowNum}')">${srv.Department}</td>
-                <td onclick="loadContent('${srv.RowNum}')">${formatDate(srv.DocDate)}</td>
-                <td onclick="loadContent('${srv.RowNum}')" class="text-center">${statusBadge}</td>
+                <td ondblclick='loadContent("${srv.SysNum}")'>${srv.TKTNumber}</td>
+                <td ondblclick='loadContent("${srv.SysNum}")'>${srv.RequestingOffice}</td>
+                <td ondblclick='loadContent("${srv.SysNum}")'>${srv.ServiceType}</td>
+                <td ondblclick='loadContent("${srv.SysNum}")'>${srv.Branch}</td>
+                <td ondblclick='loadContent("${srv.SysNum}")'>${srv.Department}</td>
+                <td class="text-center" ondblclick='loadContent("${srv.SysNum}")'>${formatDate(srv.DocDate)}</td>
+                <td ondblclick='loadContent("${srv.SysNum}")' class="text-center">${statusBadge}</td>
                 <td class ="text-center">
                     <div class="dropdown">
                       <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -156,11 +179,10 @@ function displayServices(data) {
                       </button>
                       <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#"><i class="bi bi-download"></i>    Download</a></li> <!-- Download attachments -->
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-check2"></i>  Approve</a></li> <!-- Approve request -->
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-x-lg"></i>    Reject</a></li> <!-- Reject request -->
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-chat-right-dots"></i> Comment</a></li> <!-- Add internal notes / comments -->
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-person-fill-check"></i>   Assign</a></li> <!-- Assign ticket to another user/department -->
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-exclamation-circle"></i>  Mark as Important</a></li> <!-- Optional: acknowledge ticket -->
+                        <li><a class="dropdown-item" href="#" onclick="mdlApprovedAction('${srv.SysNum}')"><i class="bi bi-check2"></i>  Approve</a></li> 
+                        <li><a class="dropdown-item" href="#" onclick="mdlRejectAction('${srv.SysNum}')"><i class="bi bi-x-lg"></i>    Reject</a></li> 
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person-fill-check"></i>   Assign</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="addTicktImportant('${srv.SysNum}')"><i class="bi bi-exclamation-circle"></i>  Mark as Important</a></li> <!-- Optional: acknowledge ticket -->
                       </ul>
                     </div>
                 </td>
@@ -204,102 +226,407 @@ function buildPageNumbers() {
 }
 
 
-function loadContent(RowNum) {
+
+/*Function show Ticket Content*/
+function loadContent(SysNum){
     $("#mdl-ticket-content").modal('show');
+
+    $.post("dirs/dashboard/actions/get_ticketcontent.php",{
+        SysNum : SysNum
+    },function(data){
+        let response = JSON.parse(data);
+
+        if($.trim(response.isSuccess) == "success"){
+            $("#card-content").removeClass('d-none');
+
+            $("#ticket-subject").val(response.Data.ServiceName);
+            $("#type-of-request").val(response.Data.ServiceType);
+            $("#description").text(response.Data.Instruction);
+            $("#mdl-ticket-number").text(response.Data.TKTNumber);
+
+            $("#ticket-id-number").val(response.Data.TKTNumber);
+            $("#tikcet-description").summernote('code', response.Data.MsgContent);
+
+            $("#manager-name").text(response.Data.UserFullname);
+            $("#manager-position").text(response.Data.UserJobPosition);
+            $("#manager-department").text(response.Data.UserDepartment);
+
+            if(response.Data.Attachment === null){
+                $("#dowload-attachment").addClass('d-none');
+            }else{
+                $("#dowload-attachment").removeClass('d-none');
+            }
+
+        }else{
+            alert($.trim(response.Data));
+        }
+    });
 }
 
 
-// /*Function reject get id*/
-// function rejectRequest(Req_id){
-//     $("#modal-reject").modal('show');
-//     $.post("dirs/dashboard/actions/get_ticket.php",{
-//         Req_id : Req_id
-//     },function(data){
-//         response = JSON.parse(data);
-//         if(jQuery.trim(response.isSuccess) == "success"){
-//             $("#ticket-id").val(response.Data.Req_id);
-//         }else{
-//             alert(jQuery.trim(response.Data));
-//         }
-//     });
-// }
 
 
-// /*Function reject request*/
-// function saveRejectRequest(){
-//     var Req_id = $("#ticket-id").val();
-//     var ReqStatus = '3';
-//     $.post("dirs/dashboard/actions/update_status.php", {
-//         Req_id : Req_id,
-//         ReqStatus : ReqStatus
-//     },function(data){
-//         if(jQuery.trim(data) == "success"){
-//             $("#modal-reject").modal('hide');
-//             loadDashboard();
-//             Swal.fire({
-//                 icon: 'success',
-//                 title: 'Success',
-//                 text: 'Request Rejected.',
-//                 timer: 2000,
-//                 showConfirmButton: false
-//             });
-//         }else{
-//             Swal.fire({
-//                 icon: 'error',
-//                 title: 'Error',
-//                 text: data,
-//                 timer: 2000,
-//                 showConfirmButton: false
-//             });
-//             alert(data); 
-//         }
-//     });
-// }
+/*Function reject ticket*/
+function mdlRejectPrompt() {
+    Swal.fire({
+        icon: "warning",
+        title: "Do you want to reject this Ticket?",
+        text: "This action cannot be undone.",
+        showCancelButton: true,
+        confirmButtonText: "Commit",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#28a745", /*success color code*/
+        cancelButtonColor: "#6c757d"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            rejectTicket(); 
+        }
+    });
+}
+
+/*Function reject ticket*/
+function rejectTicket() {
+    var  Ticket  = $("#ticket-id-number").val();
+    var  Action = "Rejected";
+    var Comment = $('#ticket_reply').summernote('code');
+    $.post("dirs/dashboard/actions/update_actionticket.php", {
+        Ticket   : Ticket,
+        Action   : Action,
+        Comment  : Comment,
+    }, function(data) {
+        if(jQuery.trim(data) === "success") {
+            $("#mdl-ticket-content").modal('hide');
+            loadDashboard(); 
+            Swal.fire({
+                icon: "success",
+                title: "Ticket Rejected",
+                text: "Successfully rejected.",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error.",
+                text: data
+            });
+        }
+    });
+}
 
 
-// /*Function accept get id*/
-// function acceptRequest(Req_id){
-//     $("#modal-accept").modal('show');
-//     $.post("dirs/dashboard/actions/get_ticket.php",{
-//         Req_id : Req_id
-//     },function(data){
-//         response = JSON.parse(data);
-//         if(jQuery.trim(response.isSuccess) == "success"){
-//             $("#ticket-id").val(response.Data.Req_id);
-//         }else{
-//             alert(jQuery.trim(response.Data));
-//         }
-//     });
-// }
+/*Function approved ticket*/
+function mdlApprovedPrompt() {
+    Swal.fire({
+        icon: "warning",
+        title: "Do you want to approved this Ticket?",
+        text: "This action cannot be undone.",
+        showCancelButton: true,
+        confirmButtonText: "Commit",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#28a745", /*success color code*/
+        cancelButtonColor: "#6c757d"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            approvedTicket(); 
+        }
+    });
+}
+
+/*Function approved ticket*/
+function approvedTicket() {
+    var  Ticket  = $("#ticket-id-number").val();
+    var  Action = "Approved";
+    var Comment = $('#ticket_reply').summernote('code');
+    $.post("dirs/dashboard/actions/update_actionticket.php", {
+        Ticket   : Ticket,
+        Action   : Action,
+        Comment  : Comment,
+    }, function(data) {
+        if(jQuery.trim(data) === "success") {
+            $("#mdl-ticket-content").modal('hide');
+            loadDashboard(); 
+            Swal.fire({
+                icon: "success",
+                title: "Ticket Approved",
+                text: "Successfully approved.",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error.",
+                text: data
+            });
+        }
+    });
+}
 
 
-// /*Function reject request*/
-// function saveAcceptRequest(){
-//     var Req_id = $("#ticket-id").val();
-//     var ReqStatus = '2';
-//     $.post("dirs/dashboard/actions/update_status.php", {
-//         Req_id : Req_id,
-//         ReqStatus : ReqStatus
-//     },function(data){
-//         if(jQuery.trim(data) == "success"){
-//             $("#modal-reject").modal('hide');
-//             loadDashboard();
-//             Swal.fire({
-//                 icon: 'success',
-//                 title: 'Success',
-//                 text: 'Request Accepted.',
-//                 timer: 2000,
-//                 showConfirmButton: false
-//             });
-//         }else{
-//             Swal.fire({
-//                 icon: 'error',
-//                 title: 'Error',
-//                 text: data,
-//                 timer: 2000,
-//                 showConfirmButton: false
-//             });
-//             alert(data); 
-//         }
-//     });
-// }
+/*Function standby ticket*/
+function mdlStandByPrompt() {
+    Swal.fire({
+        icon: "warning",
+        title: "Do you want to stand by this Ticket?",
+        text: "This action cannot be undone.",
+        showCancelButton: true,
+        confirmButtonText: "Commit",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#28a745", /*success color code*/
+        cancelButtonColor: "#6c757d"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            standbyTicket(); 
+        }
+    });
+}
+
+/*Function standby ticket*/
+function standbyTicket() {
+    var  Ticket  = $("#ticket-id-number").val();
+    var  Action = "Standby";
+    var Comment = $('#ticket_reply').summernote('code');
+    $.post("dirs/dashboard/actions/update_actionticket.php", {
+        Ticket   : Ticket,
+        Action   : Action,
+        Comment  : Comment,
+    }, function(data) {
+        if(jQuery.trim(data) === "success") {
+            $("#mdl-ticket-content").modal('hide');
+            loadDashboard(); 
+            Swal.fire({
+                icon: "success",
+                title: "Ticket Stand by",
+                text: "Successfully stand by.",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error.",
+                text: data
+            });
+        }
+    });
+}
+
+
+// Side Table Actions buttons shortcuts ********************************************************************************************************************//
+
+/*Function show swlfire prompt*/
+function mdlApprovedAction(SysNum){
+    Swal.fire({
+        icon: "warning",
+        title: "Do you want to approved this Ticket?",
+        text: "This action cannot be undone.",
+        showCancelButton: true,
+        confirmButtonText: "Commit",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#28a745", /*success color code*/
+        cancelButtonColor: "#6c757d"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            approveTicketAction(); 
+        }
+    });
+    $.post("dirs/dashboard/actions/get_ticketcontent.php",{
+        SysNum : SysNum
+    },function(data){
+        response = JSON.parse(data);
+        if(jQuery.trim(response.isSuccess) == "success"){
+            $("#side-ticket-number").val(response.Data.TKTNumber);
+        }else{
+            Swal.fire({
+                icon: "error",
+                title: "Error.",
+                text: data
+            });
+        }
+    });
+}
+
+
+/*Function approved ticket*/
+function approveTicketAction() {
+    var  Ticket  = $("#side-ticket-number").val();
+    var  Action = "Approved";
+    var Comment = $('#ticket_reply').summernote('code');
+    $.post("dirs/dashboard/actions/update_actionticket.php", {
+        Ticket   : Ticket,
+        Action   : Action,
+        Comment  : Comment,
+    }, function(data) {
+        if(jQuery.trim(data) === "success") {
+            loadDashboard(); 
+            Swal.fire({
+                icon: "success",
+                title: "Ticket Approved",
+                text: "Successfully approved.",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error.",
+                text: data
+            });
+        }
+    });
+}
+
+/*Function show swlfire prompt for reject*/
+function mdlRejectAction(SysNum){
+    Swal.fire({
+        icon: "warning",
+        title: "Do you want to reject this Ticket?",
+        text: "This action cannot be undone.",
+        showCancelButton: true,
+        confirmButtonText: "Commit",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#28a745", /*success color code*/
+        cancelButtonColor: "#6c757d"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            rejectTicketAction(); 
+        }
+    });
+    $.post("dirs/dashboard/actions/get_ticketcontent.php",{
+        SysNum : SysNum
+    },function(data){
+        response = JSON.parse(data);
+        if(jQuery.trim(response.isSuccess) == "success"){
+            $("#side-ticket-number").val(response.Data.TKTNumber);
+        }else{
+            Swal.fire({
+                icon: "error",
+                title: "Error.",
+                text: data
+            });
+        }
+    });
+}
+
+
+/*Function rejectd ticket*/
+function rejectTicketAction() {
+    var  Ticket  = $("#side-ticket-number").val();
+    var  Action = "Rejected";
+    var Comment = $('#ticket_reply').summernote('code');
+    $.post("dirs/dashboard/actions/update_actionticket.php", {
+        Ticket   : Ticket,
+        Action   : Action,
+        Comment  : Comment,
+    }, function(data) {
+        if(jQuery.trim(data) === "success") {
+            loadDashboard(); 
+            Swal.fire({
+                icon: "success",
+                title: "Ticket Rejected",
+                text: "Successfully rejected.",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error.",
+                text: data
+            });
+        }
+    });
+}
+
+
+/*Function update add important*/
+function addTicktImportant(SysNum) {
+    var ImprtntValue = 'Y';
+    $.post("dirs/dashboard/actions/update_important.php", {
+        SysNum   : SysNum,
+        ImprtntValue   : ImprtntValue
+    }, function(data) {
+        if(jQuery.trim(data) === "success") {
+            loadDashboard(); 
+            Swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Set as Important.",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error.",
+                text: data
+            });
+        }
+    });
+}
+
+
+/*Function checkbox behavior for important and not*/
+function updateImportant(SysNum, checkbox) {
+    var ImprtntValue = checkbox.checked ? 'Y' : 'N';
+    $.post("dirs/dashboard/actions/update_important.php", {
+        SysNum       : SysNum,
+        ImprtntValue : ImprtntValue
+    }, function(data) {
+        if($.trim(data) === "success") {
+            loadPostService();
+            Swal.fire({
+                icon: "success",
+                title: "Success",
+                text: ImprtntValue === 'Y' ? "Set as Important." : "Removed from Important.",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: data
+            });
+        }
+    });
+}
+/*********************************************************FIND Client*/
+
+/*Function load all Client Master List*/
+function loadFindClient() {
+    $("#mdl-clients").modal('show');
+}
+
+
+/*load Imperial Branches*/
+function loadImperialAppliancesBranch() {
+  $.post("dirs/dashboard/actions/get_branches.php", {}, function(data) {
+    const response = JSON.parse(data);
+    if ($.trim(response.isSuccess) === "success") {
+      const branches = response.Data;
+      $("#modal-iap-branch").html('<option selected value="">Branch</option>');
+      branches.forEach(branch => {
+        $("#modal-iap-branch").append(
+          $("<option>", {
+            value: branch.Branch,
+            text: branch.Branch
+          })
+        );
+      });
+
+      $("#iap-branch-dashboard").html('<option selected value="">Branch</option>');
+      branches.forEach(branch => {
+        $("#iap-branch-dashboard").append(
+          $("<option>", {
+            value: branch.Branch,
+            text: branch.Branch
+          })
+        );
+      });
+    } else {
+      alert($.trim(response.Data));
+    }
+  });
+}
