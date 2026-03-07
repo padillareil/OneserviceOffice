@@ -1,5 +1,5 @@
 <div class="card card-shadow border-0 rounded-4 mt-2">
-  <div class="card-header bg-white border-bottom">
+  <div class="card-header bg-primary-subtle border-bottom">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
 
       <!-- Left Side: Filters -->
@@ -21,40 +21,38 @@
 
         <div class="d-flex align-items-center gap-1">
           <input type="date" name="date-from" id="date-from" class="form-control border-primary-subtle form-control-sm">
-          <span class="small text-muted">to</span>
+          <span class="small">to</span>
           <input type="date" name="date-to" id="date-to" class="form-control border-primary-subtle form-control-sm">
         </div>
+        <button class="btn btn-success btn-sm" type="button" onclick="loadPostService()">
+          <i class="bi bi-check"></i> Generate
+        </button>
+      </div>
+
+      <!-- Right Side: Actions -->
+      <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-primary btn-sm" type="button" onclick="loadDashboard()">
+          <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
         <button class="btn btn-light btn-sm" type="button" id="btn-load-ticket-important">
           <i class="bi bi-exclamation-circle text-warning"></i> Important
         </button>
         <button class="btn btn-light btn-sm" type="button" onclick="loadFindClient()">
           <i class="bi bi-search"></i> Find Client
         </button>
-
-      </div>
-
-      <!-- Right Side: Actions -->
-      <div class="d-flex align-items-center gap-2">
-        <button class="btn btn-success btn-sm" type="button">
-          Apply
-        </button>
-        <button class="btn btn-outline-primary btn-sm" type="button" onclick="loadDashboard()">
-          <i class="bi bi-arrow-clockwise"></i> Refresh
-        </button>
-        
       </div>
     </div>
   </div>
 
   <div class="card-body">
     <div class="table-responsive overscroll-auto" style="height: 55vh;">
-      <table class="table table-bordered table-hovered">
+      <table class="table table-bordered table-hover">
         <thead>
-          <tr class="table-secondary">
+          <tr class="table-info">
             <th class="sticky-top" style="width:40px;"></th> <!-- checkbox or expand -->
             <th class="sticky-top">Ticket No.</th>
             <th class="sticky-top">Client</th>
-            <th class="sticky-top">Service</th>
+            <th class="sticky-top">Service Type</th>
             <th class="sticky-top">Branch</th>
             <th class="sticky-top">Department</th>
             <th class="sticky-top text-center">Date Created</th>

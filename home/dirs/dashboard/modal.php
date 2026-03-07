@@ -195,34 +195,120 @@
       <div class="modal-body">
 
        <div class="card">
-         <div class="card-header py-2">
-           <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+         <div class="card-header py-2 bg-info">
+           <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
              <div class="d-flex flex-wrap align-items-center gap-2">
+               <label class="mb-0 small">Search:</label>
                <input type="search" name="search-clients" id="search-clients" class="form-control form-control-sm border-primary-subtle" placeholder="Search client..." style="width:200px;">
-
-               <select class="form-select form-select-sm border-primary-subtle" style="width:160px;" id="modal-iap-branch">
-                 <option selected disabled>Branch</option>
-                 <option value="">All</option>
+               <label class="mb-0 small">Branch:</label>
+               <select class="form-select form-select-sm border-primary-subtle"  style="width:160px;"  id="modal-iap-branch">
+                   <option selected disabled>Branch</option>
+                   <option value="">All</option>
                </select>
-               <select class="form-select form-select-sm border-primary-subtle" style="width:160px;">
-                 <option selected disabled>Department</option>
-                 <option value="">All</option>
+
+               <label class="mb-0 small">Department:</label>
+               <select class="form-select form-select-sm border-primary-subtle"  style="width:160px;"  id="modal-department-client">
+                   <option value="">Department</option>
                </select>
              </div>
-             <!-- Right Action -->
-             <div>
-               <button class="btn btn-primary btn-sm">
+             <div class="d-flex align-items-center gap-2">
+               <button class="btn btn-primary btn-sm" onclick="reloadModalClient()">
                  <i class="bi bi-arrow-clockwise"></i> Refresh
                </button>
              </div>
            </div>
          </div>
          <div class="card-body">
-           
+           <div class="table-responsive overscroll-auto" style="height: 55vh;">
+             <table class="table table-sm table-bordered table-hover">
+               <thead>
+                 <tr class="table-secondary">
+                   <th class="sticky-top">Client</th>
+                   <th class="sticky-top">Position</th>
+                   <th class="sticky-top">Branch</th>
+                   <th class="sticky-top">Department</th>
+                 </tr>
+               </thead>
+               <tbody id="client_dsplay">
+                 <tr>
+                   <td colspan="3" class="text-center py-5">
+                     <div class="d-flex flex-column align-items-center text-muted">
+                       <div class="mb-3" style="font-size: 40px; opacity: .35;">
+                         <i class="bi bi-people"></i>
+                       </div>
+                       <div class="fw-semibold">No Client Available.</div>
+                       <div class="small opacity-75">
+                         Please refresh if no available client displayed.
+                       </div>
+                     </div>
+                   </td>
+                 </tr>
+               </tbody>
+             </table>
+           </div>
+         </div>
+         <div class="card-footer">
+           <nav>
+               <ul class="pagination" id="pagination-client">
+                   <li class="page-item">
+                       <a class="page-link" href="#" id="btn-preview-client">Previous</a> <!-- Page list number -->
+                   </li>
+                   <li class="page-item">
+                       <a class="page-link" href="#" id="btn-next-client">Next</a>
+                   </li>
+               </ul>
+           </nav>
+           <div id="page-info-client" class="mt-3 small text-muted">  <!-- Page number counting -->
+           </div>
          </div>
        </div>
-
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  /*Script for Searching ticket*/
+  $("#search-clients").on("keydown", function(e) {
+      if (e.key === "Enter") {
+          loadClients();
+      }
+  });
+  /* Pagination + Fetch Blocked Accounts */
+  $("#btn-preview-client").on("click", function(e) {
+      e.preventDefault();
+
+      if (currentPage > 1) {
+          loadClients(currentPage - 1);
+      }
+  });
+
+/*Function load all important tags tickets*/
+  $("#btn-next-client").on("click", function(e) {
+      e.preventDefault();
+
+      if (currentPage < totalPages) {
+          loadClients(currentPage + 1);
+      }
+  });
+
+
+  /*Function filter branch assignment*/
+  $("#modal-iap-branch").on("change", function() {
+      loadClients();
+  });
+
+  /*Function filter department*/
+  $("#modal-department-client").on("change", function() {
+      loadClients();
+  });
+
+  
+  $("#pagination-client").on("click", ".page-number a", function(e) {
+      e.preventDefault();
+      var page = parseInt($(this).data("page"));
+      loadClients(page);
+  });
+</script>
+
+

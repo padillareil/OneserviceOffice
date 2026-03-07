@@ -13,25 +13,21 @@
   $CurrentPage  = $_POST['CurrentPage'] ?? 1;
   $PageSize     = $_POST['PageSize'] ?? 20;
   $Search       = $_POST['Search'];
-  $Important    = $_POST['Important'] ?? '';
-  $Status       = strtoupper($_POST['Status'] ?? '');
+  $Department   = $_POST['Department'] ?? '';
   $Branch       = strtoupper($_POST['Branch'] ?? '');
-
-  $DateFrom     = $_POST['DateFrom'] ?? '';
-  $DateTo       = $_POST['DateTo'] ?? '';
 
 try {
   $conn->beginTransaction();
 
-    $fetch_requestservice = $conn->prepare("EXEC dbo.[SERVICES_REQUEST] ?,?,?,?,?,?,?,?,?");
-    $fetch_requestservice->execute([$User , $CurrentPage,$PageSize,$Search, $Important, $Status, $Branch, $DateFrom, $DateTo]);
-    $get_allrequest = $fetch_requestservice->fetchAll(PDO::FETCH_ASSOC);
+    $fetch_clients = $conn->prepare("EXEC dbo.[SEARCH_CLIENTS] ?,?,?,?,?,?");
+    $fetch_clients->execute([$User , $CurrentPage,$PageSize,$Search, $Department, $Branch]);
+    $get_allclients = $fetch_clients->fetchAll(PDO::FETCH_ASSOC);
 
   $conn->commit();
 
   $response = array(
     "isSuccess" => 'success',
-    "Data" => $get_allrequest
+    "Data" => $get_allclients
   );
   echo json_encode($response);
 

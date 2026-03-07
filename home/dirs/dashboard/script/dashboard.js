@@ -57,44 +57,71 @@ var currentPage = 1;
 var pageSize = 20;
 var totalPages = 1;
 var display = $("#service_request");
-
 function loadPostService(page = 1, Important = null) {
+
+    var spinner = `
+    <tr>
+        <td colspan="9" class="text-center py-5">
+            <div class="spinner-border spinner-border-sm text-danger" role="status"></div>
+            <div class="mt-2">Loading...</div>
+        </td>
+    </tr>
+    `;
+
     var Search = $("#search-tickets").val();
-    var Status = $("#ticket-filter-status").val(); /*Type of Status Filter*/
+    var Status = $("#ticket-filter-status").val();
     var Branch = $("#iap-branch-dashboard").val();
-    $.post("dirs/dashboard/actions/get_requestservices.php", {
-        CurrentPage: page,
-        PageSize: pageSize,
-        Search: Search,
-        Important: Important,
-        Status: Status,
-        Branch: Branch
-    }, function(data) {
-        var response;
-        try {
-            response = JSON.parse(data);
-        } catch (e) {
-            toastr.error("Server error.", "Error");
-            return;
-        }
-        if ($.trim(response.isSuccess) === "success") {
-            displayServices(response.Data);
-            currentPage = page;
+    var DateFrom = $("#date-from").val();
+    var DateTo = $("#date-to").val();
 
-            if (response.Data && response.Data.length > 0) {
-                totalPages = parseInt(response.Data[0].TotalPages);
-            } else {
-                totalPages = 1;
+    display.html(spinner);
+
+    setTimeout(function(){
+
+        $.post("dirs/dashboard/actions/get_requestservices.php", {
+            CurrentPage: page,
+            PageSize: pageSize,
+            Search: Search,
+            Important: Important,
+            Status: Status,
+            Branch: Branch,
+            DateFrom: DateFrom,
+            DateTo: DateTo
+        }, function(data){
+
+            let response;
+
+            try {
+                response = JSON.parse(data);
+            } catch (e) {
+                display.html(`<tr><td colspan="9" class="text-center text-danger py-4">Server Error</td></tr>`);
+                toastr.error("Server error.", "Error");
+                return;
             }
-            buildPageNumbers();      
-            updatePaginationUI();   
-        }
-         else {
-            toastr.error($.trim(response.Data), "Error");
-        }
-    });
-}
 
+            if ($.trim(response.isSuccess) === "success") {
+
+                displayServices(response.Data);
+                currentPage = page;
+
+                totalPages = (response.Data && response.Data.length > 0)
+                    ? parseInt(response.Data[0].TotalPages)
+                    : 1;
+
+                buildPageNumbers();
+                updatePaginationUI();
+
+            } else {
+
+                display.html(`<tr><td colspan="9" class="text-center text-muted py-4">No data found</td></tr>`);
+                toastr.error($.trim(response.Data), "Error");
+
+            }
+
+        });
+
+    }, 200);
+}
 
 /* Render Blocked Accounts into Table */
 function displayServices(data) {
@@ -145,24 +172,32 @@ function displayServices(data) {
 
         // Determine Important check display
         let statusCheckBox = '';
+        let disabledAttr = '';
 
-        switch (srv.Important) {
-            case 'Y':
-                statusCheckBox = 'checked';
-                break;
-
-            case 'N':
-                statusCheckBox = '';
-                break;
-
-            default:
-                statusCheckBox = '';
+        // Only allow checkbox for TicketStatus O (Open) or S (Stand By)
+        if (srv.TicketStatus === 'OPEN' || srv.TicketStatus === 'STAND BY') {
+            // Determine if checked based on Important value
+            switch (srv.Important) {
+                case 'Y':
+                    statusCheckBox = 'checked';
+                    break;
+                case 'N':
+                default:
+                    statusCheckBox = '';
+            }
+            disabledAttr = ''; // enabled
+        } else {
+            // Any other status → checkbox disabled
+            statusCheckBox = '';
+            disabledAttr = 'disabled';
         }
         display.append(`
             <tr>
                 <td>
                 <div class="form-check ml-3">
-                  <input class="form-check-input text-lg border-primary" type="checkbox" ${statusCheckBox} onchange="updateImportant('${srv.SysNum}', this)">
+                  <input class="form-check-input text-lg border-primary" type="checkbox"
+                             ${statusCheckBox} ${disabledAttr}
+                             onchange="updateImportant('${srv.SysNum}', this)">
                 </div>
                 </td>
                 <td ondblclick='loadContent("${srv.SysNum}")'>${srv.TKTNumber}</td>
@@ -594,10 +629,14 @@ function updateImportant(SysNum, checkbox) {
 }
 /*********************************************************FIND Client*/
 
-/*Function load all Client Master List*/
-function loadFindClient() {
-    $("#mdl-clients").modal('show');
+/*Function for refresh button on modal displays and fields*/
+function reloadModalClient() {
+    loadImperialAppliancesBranch();
+    loadDepartments();
+    loadClients();
+    $("#search-clients").val('');
 }
+
 
 
 /*load Imperial Branches*/
@@ -606,7 +645,7 @@ function loadImperialAppliancesBranch() {
     const response = JSON.parse(data);
     if ($.trim(response.isSuccess) === "success") {
       const branches = response.Data;
-      $("#modal-iap-branch").html('<option selected value="">Branch</option>');
+      $("#modal-iap-branch").html('<option selected value="">All</option>');
       branches.forEach(branch => {
         $("#modal-iap-branch").append(
           $("<option>", {
@@ -616,7 +655,7 @@ function loadImperialAppliancesBranch() {
         );
       });
 
-      $("#iap-branch-dashboard").html('<option selected value="">Branch</option>');
+      $("#iap-branch-dashboard").html('<option selected value="">All</option>');
       branches.forEach(branch => {
         $("#iap-branch-dashboard").append(
           $("<option>", {
@@ -630,3 +669,191 @@ function loadImperialAppliancesBranch() {
     }
   });
 }
+
+/*load Department client departments*/
+function loadDepartments() {
+  $.post("dirs/dashboard/actions/get_departments.php", {}, function(data) {
+    const response = JSON.parse(data);
+    if ($.trim(response.isSuccess) === "success") {
+      const branches = response.Data;
+      $("#modal-department-client").html('<option selected value="">All</option>');
+      branches.forEach(dpmnt => {
+        $("#modal-department-client").append(
+          $("<option>", {
+            value: dpmnt.Department,
+            text: dpmnt.Department
+          })
+        );
+      });
+    } else {
+      alert($.trim(response.Data));
+    }
+  });
+}
+
+
+/*Function load all Client Master List*/
+function loadFindClient() {
+    $("#mdl-clients").modal('show');
+    loadClients();
+    loadDepartments();
+}
+
+/*Function Display all clients requested to the department*/
+var currentPage = 1;
+var pageSize = 20;
+var totalPages = 1;
+var display = $("#client_dsplay");
+
+function loadClients(page = 1) {
+    var spinner = `
+        <tr>
+            <td colspan="4" class="text-center py-5">
+                <p>Loading...</p>
+              <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+            </td>
+        </tr>
+    `;
+    var Search = $("#search-clients").val();
+    var Department = $("#modal-department-client").val();
+    var Branch = $("#modal-iap-branch").val();
+    /* Show spinner */
+    display.html(spinner);
+    /* Delay request 200ms */
+    setTimeout(function(){
+
+        $.post("dirs/dashboard/actions/get_myclients.php", {
+            CurrentPage: page,
+            PageSize: pageSize,
+            Search: Search,
+            Branch: Branch,
+            Department: Department
+        }, function(data){
+
+            let response;
+
+            try {
+                response = JSON.parse(data);
+            } catch (e) {
+                display.html("");
+                toastr.error("Server error.", "Error");
+                return;
+            }
+
+            if ($.trim(response.isSuccess) === "success") {
+
+                displayAllClients(response.Data);
+                currentPage = page;
+
+                if (response.Data && response.Data.length > 0) {
+                    totalPages = parseInt(response.Data[0].TotalPages);
+                } else {
+                    totalPages = 1;
+                }
+
+                buildClientPageNumbers();
+                updateModalPagination();
+
+            } else {
+                display.html("");
+                toastr.error($.trim(response.Data), "Error");
+            }
+
+        });
+    }, 200); // 200ms delay
+}
+
+
+/* Render Blocked Accounts into Table */
+function displayAllClients(data) {
+    const display = $("#client_dsplay");
+    display.empty();
+
+    if (!data || data.length === 0) {
+        display.html(`
+            <tr>
+                <td colspan="4" class="text-center py-5">
+                  <div class="d-flex flex-column align-items-center text-muted">
+                    <div class="mb-3" style="font-size: 40px; opacity: .35;">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="fw-semibold">No Record Found.</div>
+                    <div class="small opacity-75">
+                      No client records exist.
+                    </div>
+                  </div>
+                </td>
+            </tr>
+        `);
+        return;
+    }
+
+    data.forEach(client => {
+        display.append(`
+            <tr ondblclick='findCustomerRecord("${client.SysNum}")'>
+                <td>${client.Fullname}</td>
+                <td>${client.Position}</td>
+                <td>${client.Branch}</td>
+                <td>${client.Department}</td>
+            </tr>
+            `);
+        });
+    }
+
+
+
+
+/*Function to count page number page 1 of and so on*/
+function updateModalPagination() {
+    $("#page-info-client").text("Page " + currentPage + " of " + totalPages);
+    if (currentPage <= 1) {
+        $("#li-prev").addClass("disabled");
+    } else {
+        $("#li-prev").removeClass("disabled");
+    }
+    if (currentPage >= totalPages) {
+        $("#li-next").addClass("disabled");
+    } else {
+        $("#li-next").removeClass("disabled");
+    }
+}
+
+/*Function to build list of pagination*/
+function buildClientPageNumbers() {
+    $("#pagination-client li.page-number").remove(); // remove old numbers
+    var prevLi = $("#btn-preview-client").parent();
+    for (var i = 1; i <= totalPages; i++) {
+        var activeClass = (i === currentPage) ? "active" : "";
+        var li = `
+            <li class="page-item page-number ${activeClass}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>
+        `;
+        $(li).insertAfter(prevLi);
+        prevLi = prevLi.next();
+    }
+}
+
+
+/*Function get the client info for search records*/
+function findCustomerRecord(SysNum){
+    $.post("dirs/dashboard/actions/get_findcustomer.php",{
+        SysNum : SysNum
+    },function(data){
+        let response = JSON.parse(data);
+        if($.trim(response.isSuccess) === "success"){
+
+            $("#mdl-clients").modal('hide');
+            $("#search-tickets").val(response.Data.Fullname);
+            loadPostService(); 
+        }else{
+
+            alert($.trim(response.Data));
+
+        }
+
+    });
+
+}
+
+
