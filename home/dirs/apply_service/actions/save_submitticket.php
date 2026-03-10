@@ -5,7 +5,6 @@ session_start();
 $Userid       = $_SESSION['Uid'];
 $Description  = $_POST['Description']; // keep HTML if needed
 $TicketNumber = $_POST['TicketNumber'];
-
 $Attachment = isset($_FILES['Attachment']) 
 ? base64_encode(file_get_contents($_FILES['Attachment']['tmp_name'])) 
 : null;

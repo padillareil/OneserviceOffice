@@ -61,7 +61,7 @@ function loadPostService(page = 1, Important = null) {
 
     var spinner = `
     <tr>
-        <td colspan="9" class="text-center py-5">
+        <td colspan="8" class="text-center py-5">
             <div class="spinner-border spinner-border-sm text-danger" role="status"></div>
             <div class="mt-2">Loading...</div>
         </td>
@@ -131,7 +131,7 @@ function displayServices(data) {
     if (!data || data.length === 0) {
         display.html(`
             <tr>
-                <td colspan="9" class="text-center py-5">
+                <td colspan="8" class="text-center py-5">
                   <div class="d-flex flex-column align-items-center text-muted">
                     <div class="mb-3" style="font-size: 40px; opacity: .35;">
                       <i class="fa fa-file"></i>
@@ -204,7 +204,6 @@ function displayServices(data) {
                 <td ondblclick='loadContent("${srv.SysNum}")'>${srv.RequestingOffice}</td>
                 <td ondblclick='loadContent("${srv.SysNum}")'>${srv.ServiceType}</td>
                 <td ondblclick='loadContent("${srv.SysNum}")'>${srv.Branch}</td>
-                <td ondblclick='loadContent("${srv.SysNum}")'>${srv.Department}</td>
                 <td class="text-center" ondblclick='loadContent("${srv.SysNum}")'>${formatDate(srv.DocDate)}</td>
                 <td ondblclick='loadContent("${srv.SysNum}")' class="text-center">${statusBadge}</td>
                 <td class ="text-center">
@@ -213,11 +212,10 @@ function displayServices(data) {
                         <i class="bi bi-three-dots"></i>
                       </button>
                       <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-download"></i>    Download</a></li> <!-- Download attachments -->
+                        <li><a class="dropdown-item" href="#" onclick="dwnloadAttachment('${srv.SysNum}')"><i class="bi bi-download"></i>    Download</a></li> <!-- Download attachments -->
                         <li><a class="dropdown-item" href="#" onclick="mdlApprovedAction('${srv.SysNum}')"><i class="bi bi-check2"></i>  Approve</a></li> 
                         <li><a class="dropdown-item" href="#" onclick="mdlRejectAction('${srv.SysNum}')"><i class="bi bi-x-lg"></i>    Reject</a></li> 
                         <li><a class="dropdown-item" href="#"><i class="bi bi-person-fill-check"></i>   Assign</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="addTicktImportant('${srv.SysNum}')"><i class="bi bi-exclamation-circle"></i>  Mark as Important</a></li> <!-- Optional: acknowledge ticket -->
                       </ul>
                     </div>
                 </td>
@@ -290,6 +288,22 @@ function loadContent(SysNum){
                 $("#dowload-attachment").addClass('d-none');
             }else{
                 $("#dowload-attachment").removeClass('d-none');
+            }
+
+            /*Button actions condition here that if status is reject and cancelled must button will be hidden*/
+
+            if (response.Data.TicketStatus === 'REJECTED' || response.Data.TicketStatus === 'CANCELLED') {
+                $("#btn-add-response").addClass('d-none');
+                $("#btn-add-approve").addClass('d-none');
+                $("#btn-add-standby").addClass('d-none');
+                $("#btn-add-reject").addClass('d-none');
+
+            }else{
+                $("#rejection-fields").removeClass('d-none');
+                $("#btn-add-response").removeClass('d-none');
+                $("#btn-add-approve").removeClass('d-none');
+                $("#btn-add-standby").removeClass('d-none');
+                $("#btn-add-reject").removeClass('d-none');
             }
 
         }else{
@@ -857,3 +871,75 @@ function findCustomerRecord(SysNum){
 }
 
 
+
+/*Function save response for comment*/
+function saveResponse() {
+    var btnSave = $("#btn-save-comment");
+    var btnCancel = $("#btn-cancel-comment");
+    var originalText = btnSave.html();
+    var spinner = `<span class="spinner-border spinner-border-sm me-2" role="status"></span> Saving...`;
+    btnSave.prop("disabled", true).html(spinner);
+    btnCancel.prop("disabled", true);
+    var TiketNum = $("#ticket-id-number").val();
+    var ResponseTicket = $('#ticket_reply').summernote('code');
+    var Status = 'X';
+    $.post("dirs/dashboard/actions/update_comment_response.php", {
+        TiketNum: TiketNum,
+        ResponseTicket: ResponseTicket,
+        Status: Status
+    }, function(data) {
+
+        if($.trim(data) === "success") {
+            $("#mdl-ticket-content").modal('hide');
+            $('#ticket_reply').summernote('code', '');
+            $("#frm-ticket-content")[0].reset();
+
+            // close collapse
+            var collapseElement = document.getElementById('collapse-message');
+            var collapseInstance = bootstrap.Collapse.getOrCreateInstance(collapseElement);
+            collapseInstance.hide();
+
+            loadDashboard();
+            Swal.fire({
+                icon: "success",
+                title: "Sent",
+                text: "Successfully sent.",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: data,
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+        // Restore buttons
+        btnSave.prop("disabled", false).html(originalText);
+        btnCancel.prop("disabled", false);
+    });
+}
+
+
+/***********************************Downloading File Attachment*****************************************************/
+/*Function Donwload Attahment*/
+// function dwnloadAttachment(SysNum){
+//     $.post("dirs/dashboard/actions/get_download_attachment.php",{
+//         SysNum : SysNum
+//     },function(data){
+//         response = JSON.parse(data);
+//         if(jQuery.trim(response.isSuccess) == "success"){
+//             $("#").val(response.Data.Attachment);
+//         }else{
+//             Swal.fire({
+//                 icon: "error",
+//                 title: "Error",
+//                 text: data,
+//                 timer: 2000,
+//                 showConfirmButton: false
+//             });
+//         }
+//     });
+// }

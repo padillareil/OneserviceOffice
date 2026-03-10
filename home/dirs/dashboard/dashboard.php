@@ -10,7 +10,7 @@
 		        </div>
 		        <div>
 		          <div class="text-muted">Queue Tickets</div>
-		          <div class="fs-3 fw-bold" id="queue-tickets">0
+		          <div class="fs-3 fw-bold text-danger" id="queue-tickets">0
 		          </div>
 		        </div>
 		      </div>
@@ -79,4 +79,6 @@
 <script src="dirs/dashboard/script/dashboard.js"></script>
 
 <?php include 'modal.php';  ?>
+
+
 

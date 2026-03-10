@@ -6,7 +6,7 @@
       <div class="d-flex flex-wrap align-items-center gap-2">
         <input type="search" name="search-tickets" id="search-tickets" class="form-control border-primary-subtle form-control-sm" placeholder="Search tickets..." style="width: 200px;">
         <select class="form-select form-select-sm border-primary-subtle" style="width: 160px;" id="iap-branch-dashboard">
-          <option selected disabled>Branch</option>
+          <option selected value="">All</option>
         </select>
         <select class="form-select form-select-sm border-primary-subtle" style="width: 160px;" id="ticket-filter-status">
           <option selected disabled>Status</option>
@@ -54,7 +54,6 @@
             <th class="sticky-top">Client</th>
             <th class="sticky-top">Service Type</th>
             <th class="sticky-top">Branch</th>
-            <th class="sticky-top">Department</th>
             <th class="sticky-top text-center">Date Created</th>
             <th class="sticky-top">Status</th>
             <th class="sticky-top" style="width:120px;">Action</th>

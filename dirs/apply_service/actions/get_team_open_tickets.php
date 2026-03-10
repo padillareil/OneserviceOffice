@@ -1,6 +1,5 @@
 <?php
-  require_once "../../../../config/connection.php";
-  require_once "../../../../config/functions.php";
+  require_once "../../../config/connection.php";
   session_start();
 
   $User     = $_SESSION['Uid'];
@@ -12,25 +11,23 @@
 
 
   $CurrentPage  = $_POST['CurrentPage'] ?? 1;
-  $PageSize     = $_POST['PageSize'] ?? 100;
-  $Search       = $_POST['Search'] ?? '';
-  $Department    = $_POST['Department'] ?? '';
-
-
+  $PageSize     = $_POST['PageSize'] ?? 20;
+  $Search       = $_POST['Search'];
+  $Department   = $_POST['Department'] ?? '';
+  $Staff        = $_POST['Staff'] ?? '';
 
 try {
   $conn->beginTransaction();
 
-    $fetch_services = $conn->prepare("EXEC dbo.[AVAILABLE_SERVICES] ?,?,?,?,?");
-    $fetch_services->execute([$Department, $CurrentPage, $PageSize, $Search, $User ]);
-    $get_srvs = $fetch_services->fetchAll(PDO::FETCH_ASSOC);
-    $fetch_services->closeCursor();
+    $fetch_clients = $conn->prepare("EXEC dbo.[INQUEUE_TICKETS_TEAMS] ?,?,?,?,?,?,?");
+    $fetch_clients->execute([$User , $CurrentPage,$PageSize,$Search, $Department , $Staff]);
+    $get_allclients = $fetch_clients->fetchAll(PDO::FETCH_ASSOC);
 
   $conn->commit();
 
   $response = array(
     "isSuccess" => 'success',
-    "Data" => $get_srvs
+    "Data" => $get_allclients
   );
   echo json_encode($response);
 

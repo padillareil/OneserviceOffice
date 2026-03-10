@@ -10,6 +10,8 @@ function loadApplyServices() {
         $("#load_ApplyServices").html(data);
         loadDepartments();
         loadPostService();
+
+        loadTeamsApplied_Open();
     });
 }
 
@@ -216,6 +218,141 @@ function filterDepartment(Department){
 
 
 
+
+    /*Function Display all clients requested to the department*/
+    var currentPage = 1;
+    var pageSize = 20;
+    var totalPages = 1;
+    var display = $("#teams_open_tickets");
+
+    function loadTeamsApplied_Open(page = 1) {
+        var spinner = `
+            <tr>
+                <td colspan="5" class="text-center py-5">
+                    <p>Loading...</p>
+                  <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+                </td>
+            </tr>
+        `;
+        var Search = $("#search-request").val();
+        var Department = $("#open-ticket-department").val();
+        var Staff = $("#open-ticket-staff").val();
+        /* Show spinner */
+        display.html(spinner);
+        /* Delay request 200ms */
+        setTimeout(function(){
+
+            $.post("dirs/apply_service/actions/get_team_open_tickets.php", {
+                CurrentPage: page,
+                PageSize: pageSize,
+                Search: Search,
+                Staff: Staff,
+                Department: Department
+            }, function(data){
+
+                let response;
+
+                try {
+                    response = JSON.parse(data);
+                } catch (e) {
+                    display.html("");
+                    toastr.error("Server error.", "Error");
+                    return;
+                }
+
+                if ($.trim(response.isSuccess) === "success") {
+
+                    displayTeamsOpen_Tickets(response.Data);
+                    currentPage = page;
+
+                    if (response.Data && response.Data.length > 0) {
+                        totalPages = parseInt(response.Data[0].TotalPages);
+                    } else {
+                        totalPages = 1;
+                    }
+
+                    buildTeamsOpnNUmber();
+                    updateModalTeamsPagination();
+
+                } else {
+                    display.html("");
+                    toastr.error($.trim(response.Data), "Error");
+                }
+
+            });
+        }, 200); // 200ms delay
+    }
+
+
+    /* Render Blocked Accounts into Table */
+    function displayTeamsOpen_Tickets(data) {
+        const display = $("#teams_open_tickets");
+        display.empty();
+
+        if (!data || data.length === 0) {
+            display.html(`
+                <tr>
+                    <td colspan="4" class="text-center py-5">
+                      <div class="d-flex flex-column align-items-center text-muted">
+                        <div class="mb-3" style="font-size: 40px; opacity: .35;">
+                          <i class="bi bi-people"></i>
+                        </div>
+                        <div class="fw-semibold">No Record Found.</div>
+                        <div class="small opacity-75">
+                          No client records exist.
+                        </div>
+                      </div>
+                    </td>
+                </tr>
+            `);
+            return;
+        }
+
+        data.forEach(client => {
+            display.append(`
+                <tr ondblclick='findCustomerRecord("${client.SysNum}")'>
+                    <td>${client.Fullname}</td>
+                    <td>${client.Position}</td>
+                    <td>${client.Branch}</td>
+                    <td>${client.Department}</td>
+                </tr>
+                `);
+            });
+        }
+
+
+
+
+    /*Function to count page number page 1 of and so on*/
+    function updateModalTeamsPagination() {
+        $("#pagination-t-application").text("Page " + currentPage + " of " + totalPages);
+        if (currentPage <= 1) {
+            $("#li-prev").addClass("disabled");
+        } else {
+            $("#li-prev").removeClass("disabled");
+        }
+        if (currentPage >= totalPages) {
+            $("#li-next").addClass("disabled");
+        } else {
+            $("#li-next").removeClass("disabled");
+        }
+    }
+
+    /*Function to build list of pagination*/
+    function buildTeamsOpnNUmber() {
+        $("#page-info-t-application li.page-number").remove(); // remove old numbers
+        var prevLi = $("#btn-preview-client").parent();
+        for (var i = 1; i <= totalPages; i++) {
+            var activeClass = (i === currentPage) ? "active" : "";
+            var li = `
+                <li class="page-item page-number ${activeClass}">
+                    <a class="page-link" href="#" data-page="${i}">${i}</a>
+                </li>
+            `;
+            $(li).insertAfter(prevLi);
+            prevLi = prevLi.next();
+        }
+    }
 
 
 // function load_modal(valueStudentID, valueOperation){

@@ -5,12 +5,13 @@
 		  <a href="#" class="text-decoration-none">
 		    <div class="card shadow-sm border-0 rounded-4 h-100 hover-lift">
 		      <div class="card-body d-flex align-items-center">
-		        <div class="me-3 rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center" style="width:56px;height:56px;">
+		        <div class="me-3 rounded-circle bg-info-subtle text-info d-flex align-items-center justify-content-center" style="width:56px;height:56px;">
 		          <i class="bi bi-list-nested fs-4"></i>
 		        </div>
 		        <div>
 		          <div class="text-muted">Queue Tickets</div>
-		          <div class="fs-3 fw-bold" id="resolved-tickets">0</div>
+		          <div class="fs-3 fw-bold text-danger" id="queue-tickets">0
+		          </div>
 		        </div>
 		      </div>
 		    </div>
@@ -26,7 +27,8 @@
 		        </div>
 		        <div>
 		          <div class="text-muted">Resolved Tickets</div>
-		          <div class="fs-3 fw-bold" id="resolved-tickets">0</div>
+		          <div class="fs-3 fw-bold" id="resolved-tickets">
+		          </div>
 		        </div>
 		      </div>
 		    </div>
@@ -42,7 +44,8 @@
 		        </div>
 		        <div>
 		          <div class="text-muted">Standby Tickets</div>
-		          <div class="fs-3 fw-bold" id="resolved-tickets">0</div>
+		          <div class="fs-3 fw-bold" id="standby-tickets">
+		          </div>
 		        </div>
 		      </div>
 		    </div>
@@ -58,7 +61,8 @@
 		        </div>
 		        <div>
 		          <div class="text-muted">Cancelled Tickets</div>
-		          <div class="fs-3 fw-bold" id="resolved-tickets">0</div>
+		          <div class="fs-3 fw-bold" id="cancel-tickets">
+		          </div>
 		        </div>
 		      </div>
 		    </div>
@@ -70,8 +74,11 @@
 
 
 
-
+<input type="hidden" id="side-ticket-number">
 
 <script src="dirs/dashboard/script/dashboard.js"></script>
 
 <?php include 'modal.php';  ?>
+
+
+

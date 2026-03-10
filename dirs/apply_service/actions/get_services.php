@@ -21,8 +21,8 @@
 try {
   $conn->beginTransaction();
 
-    $fetch_services = $conn->prepare("EXEC dbo.[AVAILABLE_SERVICES] ?,?,?,?");
-    $fetch_services->execute([$Department, $CurrentPage, $PageSize, $Search ]);
+    $fetch_services = $conn->prepare("EXEC dbo.[AVAILABLE_SERVICES] ?,?,?,?,?");
+    $fetch_services->execute([$Department, $CurrentPage, $PageSize, $Search, $User ]);
     $get_srvs = $fetch_services->fetchAll(PDO::FETCH_ASSOC);
     $fetch_services->closeCursor();
 

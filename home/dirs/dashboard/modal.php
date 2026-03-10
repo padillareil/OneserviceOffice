@@ -92,7 +92,7 @@
                 </div>
               </div>
 
-              <input type="text" id="ticket-id-number"><!-- Ticket number -->
+              <input type="hidden" id="ticket-id-number"><!-- Ticket number -->
 
               <div class="row justify-content-between d-flex">
                 <div class="col-md-4">
@@ -108,20 +108,35 @@
                   </div>
                 </div>
               </div>
-              <small>Message Content:</small>
-              <textarea  id="tikcet-description" name="tikcet-description" class="form-control" style="height: 20vh;" readonly></textarea>
-              <div class="mt-2 d-none"  id="dowload-attachment">
-                <button class="btn btn-outline-danger">
-                  <i class="bi bi-download"></i> Download Attachment
-                </button>
-              </div>
-              <!-- Ticket Comment by user -->
-              <div class="mt-3 collapse" id="collapse-message">
-                  <small>Comment:</small>
-                  <textarea id="ticket_reply" name="ticket_reply" class="form-control" placeholder="Comment...." required style="height: 10vh;"></textarea>
-                  <button class="btn btn-success mt-2" type="button" id="btn-save-comment">Save</button>
-                  <button class="btn btn-secondary mt-2" type="button" id="btn-cancel-comment" data-bs-toggle="collapse"  href="#collapse-message">Cancel</button>
-              </div>
+                <small>Message Content:</small>
+                <textarea  id="tikcet-description" name="tikcet-description" class="form-control" style="height: 20vh;" readonly></textarea>
+                <div class="mt-2 d-none"  id="dowload-attachment">
+                  <button class="btn btn-outline-danger">
+                    <i class="bi bi-download"></i> Download Attachment
+                  </button>
+                </div>
+<!-- 
+                <div class="d-flex justify-content-end mt-3">
+                    <div class="d-flex flex-column gap-2 col-md-3">
+                        <small class="text-danger">Feedback:</small>
+                        <p id="reject-feedback">
+                        </p>
+
+                        <div class="text-center" style="min-width:150px;">
+                            <div class="small text-muted" id="rejector-time"></div>
+                        </div>
+
+                    </div>
+                </div>
+ -->
+
+
+                <!-- Ticket Comment by user -->
+                <div class="mt-3 collapse" id="collapse-message">
+                    <small>Response:</small>
+                    <textarea id="ticket_reply" name="ticket_reply" class="form-control" placeholder="Comment...." style="height: 10vh;"></textarea>
+                    
+                </div>
 
             </div>
           </div>
@@ -129,11 +144,13 @@
 
         <div class="modal-footer d-flex justify-content-between align-items-center">
           <div>
-            <button class="btn btn-outline-primary" data-bs-toggle="collapse"  href="#collapse-message">
-              <i class="bi bi-chat-left-text"></i> Add Comment
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse"  href="#collapse-message" id="btn-add-response">
+                <i class="bi bi-chat-left-text"></i> Add Response
             </button>
           </div>
           <div class="d-flex gap-2">
+            <button class="btn btn-success mt-2 d-none" type="button" id="btn-save-comment" onclick="saveResponse()">Save</button>
+            <button class="btn btn-secondary mt-2 d-none" type="button" id="btn-cancel-comment" data-bs-toggle="collapse"  href="#collapse-message">Cancel</button>
             <button class="btn btn-success" type="button" id="btn-approve" onclick="mdlApprovedPrompt()">
               <i class="bi bi-check-circle"></i> Approve
             </button>
@@ -143,7 +160,7 @@
             <button class="btn btn-danger" type="button" id="btn-reject" onclick="mdlRejectPrompt()">
               <i class="bi bi-x-circle"></i> Reject
             </button>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">
+            <button class="btn btn-secondary" data-bs-dismiss="modal" type="button" id="btn-close-modal">
               Close
             </button>
           </div>
@@ -160,10 +177,32 @@
 
 
 <script>
+
+  var collapseMessage = document.getElementById('collapse-message');
+  collapseMessage.addEventListener('shown.bs.collapse', function () {
+      // hide action buttons
+      $("#btn-approve, #btn-standby, #btn-reject,#btn-close-modal").addClass("d-none");
+      // show response buttons
+      $("#btn-save-comment, #btn-cancel-comment").removeClass("d-none");
+      // change button text
+      $("#btn-add-response").html('<i class="bi bi-x-circle"></i> Cancel Response');
+
+  });
+
+  collapseMessage.addEventListener('hidden.bs.collapse', function () {
+      // show action buttons
+      $("#btn-approve, #btn-standby, #btn-reject,#btn-close-modal").removeClass("d-none");
+      // hide response buttons
+      $("#btn-save-comment, #btn-cancel-comment").addClass("d-none");
+      // change button text back
+      $("#btn-add-response").html('<i class="bi bi-chat-left-text"></i> Add Response');
+
+  });
+
   $(document).ready(function () {
       $('#ticket_reply').summernote({
           height: 250,
-          placeholder: 'Comment....',
+          placeholder: 'Message response....',
           toolbar: [
             ['style', ['bold', 'italic', 'underline']],  
             ['para', ['ul', 'ol']],                     

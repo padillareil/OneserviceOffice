@@ -11,17 +11,17 @@
           <div class="card-header">
             <div class="d-flex flex-wrap align-items-center gap-2">
               <input type="search" name="search-request" id="search-request" class="form-control form-control-sm" placeholder="Search request..." style="width: 200px;">
-              <select class="form-select form-select-sm" style="width: 180px;" title="Requested Department">
+              <select class="form-select form-select-sm" style="width: 180px;" title="Requested Department" id="open-ticket-department">
                 <option selected disabled>Department</option>
               </select>
-              <select class="form-select form-select-sm" style="width: 180px;" title="Prepared by Staff">
+              <select class="form-select form-select-sm" style="width: 180px;" title="Prepared by Staff" id="open-ticket-staff">
                 <option selected disabled>Filter by Staff</option>
               </select>
               <div class="d-flex align-items-center gap-1">
                 <span class="small text-muted">from</span>
-                <input type="date" name="date-from" id="date-from" class="form-control form-control-sm">
+                <input type="date" name="date-from-open" id="date-from-open" class="form-control form-control-sm">
                 <span class="small text-muted">to</span>
-                <input type="date" name="date-to" id="date-to" class="form-control form-control-sm">
+                <input type="date" name="date-to-open" id="date-to-open" class="form-control form-control-sm">
               </div>
               <button type="button" class="btn btn-sm btn-success">Apply</button>
               <button type="button" class="btn btn-sm btn-primary">Refresh</button>
@@ -39,7 +39,7 @@
                     <th>Status</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="teams_open_tickets">
                   <tr>
                     <td colspan="5" class="text-center py-5">
                       <div class="d-flex flex-column align-items-center text-muted">

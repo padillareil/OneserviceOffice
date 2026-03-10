@@ -1,12 +1,12 @@
 <?php
-require_once "../../../../config/connection.php";
-require_once "../../../../config/functions.php";
+require_once "../../../config/connection.php";
+require_once "../../../config/functions.php";
 session_start();
 
 $User     = $_SESSION['Uid'];
 
 if (!isset($_SESSION['Uid'])) {
-    header('Location: ../../../../login.php');
+    header('Location: ../../../login.php');
     exit();
 }
 

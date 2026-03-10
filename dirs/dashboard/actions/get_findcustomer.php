@@ -1,21 +1,20 @@
 <?php
   require_once "../../../config/connection.php";
-  session_start();
 
-  $Uid = $_SESSION['Uid'];
+  $SysNum     = $_POST['SysNum'];
 
 try {
   $conn->beginTransaction();
 
-    $fetch_ticketcontent = $conn->prepare("EXEC dbo.[DEPARTMENT_TICKET] ?");
-    $fetch_ticketcontent->execute([ $Uid ]);
-    $get_ticket = $fetch_ticketcontent->fetch(PDO::FETCH_ASSOC);
+    $fetch_customer = $conn->prepare("EXEC dbo.[FIND_CUSTOMER_DATA] ?");
+    $fetch_customer->execute([ $SysNum]);
+    $get_and_find_this_wonderful_person = $fetch_customer->fetch(PDO::FETCH_ASSOC);
 
   $conn->commit();
 
   $response = array(
     "isSuccess" => 'success',
-    "Data" => $get_ticket
+    "Data" => $get_and_find_this_wonderful_person
   );
   echo json_encode($response);
 

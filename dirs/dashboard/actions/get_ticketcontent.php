@@ -2,13 +2,13 @@
   require_once "../../../config/connection.php";
   session_start();
 
-  $Uid = $_SESSION['Uid'];
+  $SysNum = $_POST['SysNum'];
 
 try {
   $conn->beginTransaction();
 
-    $fetch_ticketcontent = $conn->prepare("EXEC dbo.[DEPARTMENT_TICKET] ?");
-    $fetch_ticketcontent->execute([ $Uid ]);
+    $fetch_ticketcontent = $conn->prepare("EXEC dbo.[TICKET_CONTENT] ?");
+    $fetch_ticketcontent->execute([ $SysNum ]);
     $get_ticket = $fetch_ticketcontent->fetch(PDO::FETCH_ASSOC);
 
   $conn->commit();

@@ -30,15 +30,11 @@
           
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success" id="btn-submit">
-            <span id="btn-text-submit">Save</span>
-            <span id="btn-spinner-submit" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:none;"></span>
+          <button class="btn btn-success" type="submit" id="btn-submit">
+              <span id="btn-text">Save</span>
+              <span id="btn-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:none;"></span>
           </button>
-          <button type="button" class="btn btn-primary d-none" id="btn-update" onclick="saveUpdate()">
-            <span id="btn-text-upd">Save Changes</span>
-            <span id="btn-spinner-upd" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:none;"></span>
-          </button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-cancel" onclick="resetButtons()">Cancel</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-cancel">Cancel</button>
         </div>
       </div>
     </div>
@@ -54,91 +50,58 @@
   });
 
 /****************************Form Function sending request****************************************/
-var lastSubmitPayload = null;
-/*Function for btn control spinner for submit*/
-function setSubmitSpinner(isSubmitting) {
-    if (isSubmitting) {
-        $("#btn-spinner-submit").removeClass("d-none");
-        $("#btn-text-submit").text(" Please wait...");
-        $("#btn-submit").prop("disabled", true);
-        $("#btn-cancel").prop("disabled", true);
-        window.onbeforeunload = function () {
-            return "Please wait, your request is being processed.";
-        };
-    } else {
-        $("#btn-spinner-submit").addClass("d-none");
-        $("#btn-text-submit").text("Save");
-        $("#btn-submit").prop("disabled", false);
-        $("#btn-cancel").prop("disabled", false);
-        window.onbeforeunload = null;
-    }
-}
+    $("#frm-add-account").submit(function(event){
+    event.preventDefault();
+    var btnSave   = $("#btn-submit");
+    var btnCancel = $("#btn-cancel");
+    var originalText = btnSave.html();
+    var spinner = `<span class="spinner-border spinner-border-sm me-2" role="status"></span> Saving...`;
+    btnSave.prop("disabled", true).html(spinner);
+    btnCancel.prop("disabled", true);
+    var Fullname = $("#fullname").val();
+    var Position = $("#staff-position").val();
+    var Username = $("#staff-username").val();
+    var Password = $("#staff-password").val();
 
-/*Function to submit request*/
-function saveNewAccount(payload) {
-    $.post("dirs/accounts/actions/save_account.php", payload)
-    .done(function(data) {
-        if ($.trim(data) === "OK") {
-            setSubmitSpinner(false);
-            $("#frm-add-account")[0].reset();
+    $.post("dirs/accounts/actions/save_account.php",{
+
+        Fullname : Fullname,
+        Position : Position,
+        Username : Username,
+        Password : Password
+
+    }, function(data){
+
+        if($.trim(data) == "OK"){
+
             $("#mdl-add-account").modal('hide');
+            $("#frm-add-account")[0].reset();
+
             loadAccounts();
+
             Swal.fire({
                 icon: "success",
-                title: "New Staff Added",
-                text: "Successfully new account created.",
+                title: "Success",
+                text: "New Staff Added.",
                 timer: 2000,
                 showConfirmButton: false
             });
-            lastSubmitPayload = null;
-        } else {
-            setSubmitSpinner(false);
+
+        }else{
+
             Swal.fire({
                 icon: "error",
                 title: "Error",
                 text: data
             });
+
         }
 
-    })
-    .fail(function() {
-        setSubmitSpinner(false);
-        Swal.fire({
-            icon: "warning",
-            title: "Connection Lost",
-            text: "Will retry automatically when online"
-        });
+        btnSave.prop("disabled", false).html(originalText);
+        btnCancel.prop("disabled", false);
+
     });
-}
 
-/*Function submit post service created*/
-$("#frm-add-account").submit(function(event){
-    event.preventDefault();
-    if (!navigator.onLine) {
-        Swal.fire("Offline", "No internet connection", "info");
-        return;
-    }
-    setSubmitSpinner(true);
-    var Fullname    = $("#fullname").val();
-    var Position    = $("#staff-position").val();
-    var Username    = $("#staff-username").val();
-    var Password    = $("#staff-password").val();
-
-    lastSubmitPayload = {
-        Fullname: Fullname,
-        Position: Position,
-        Username: Username,
-        Password: Password
-    };
-    saveNewAccount(lastSubmitPayload);
-});
-/*Auto retry when connection restored*/
-window.addEventListener("online", function () {
-    if (lastSubmitPayload !== null) {
-      console.log("Retrying submit...");
-      setSubmitSpinner(true);
-      saveNewAccount(lastSubmitPayload);
-    }
 });
 
 /****************************Form Function sending request****************************************/

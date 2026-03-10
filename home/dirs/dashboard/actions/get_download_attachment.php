@@ -1,21 +1,24 @@
 <?php
-  require_once "../../../config/connection.php";
-  session_start();
+  require_once "../../../../config/connection.php";
 
-  $Uid = $_SESSION['Uid'];
+  $SysNum     = $_POST['SysNum'];
 
 try {
   $conn->beginTransaction();
 
-    $fetch_ticketcontent = $conn->prepare("EXEC dbo.[DEPARTMENT_TICKET] ?");
-    $fetch_ticketcontent->execute([ $Uid ]);
-    $get_ticket = $fetch_ticketcontent->fetch(PDO::FETCH_ASSOC);
+    $downloadAttachment = $conn->prepare("
+      SELECT Attachment
+      FROM TKT_REQUEST 
+      WHERE SysNum = ?
+    ");
+    $downloadAttachment->execute([ $SysNum ]);
+    $get_attachment = $downloadAttachment->fetch(PDO::FETCH_ASSOC);
 
   $conn->commit();
 
   $response = array(
     "isSuccess" => 'success',
-    "Data" => $get_ticket
+    "Data" => $get_attachment
   );
   echo json_encode($response);
 
