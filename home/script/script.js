@@ -50,10 +50,25 @@ $("#main-menu")
       $mainbreadcrumb = `<li class="breadcrumb-item active">Staff Accounts</li>`;
       $file = "dirs/accounts/accounts.php";
     break;
-  case "performance":
+    case "performance":
       $maintitle = "";
       $mainbreadcrumb = `<li class="breadcrumb-item active">Staff Accounts</li>`;
       $file = "dirs/performance/performance.php";
+    break;
+    case "ticket_lookup":
+      $maintitle = "";
+      $mainbreadcrumb = `<li class="breadcrumb-item active">Staff Accounts</li>`;
+      $file = "dirs/ticket_lookup/ticket_lookup.php";
+    break;
+    case "reports":
+      $maintitle = "";
+      $mainbreadcrumb = `<li class="breadcrumb-item active">Staff Accounts</li>`;
+      $file = "dirs/reports/reports.php";
+    break;
+    case "workassignment":
+      $maintitle = "";
+      $mainbreadcrumb = `<li class="breadcrumb-item active">Staff Accounts</li>`;
+      $file = "dirs/workassignment/workassignment.php";
     break;
     case "settings":
       $maintitle = "";

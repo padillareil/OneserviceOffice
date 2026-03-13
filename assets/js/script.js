@@ -39,6 +39,11 @@ $("#main-menu")
       $mainbreadcrumb = `<li class="breadcrumb-item active"></li>`;
       $file = "dirs/apply_service/apply_service.php";
       break;
+    case "ticket_lookup":
+      $maintitle = "";
+      $mainbreadcrumb = `<li class="breadcrumb-item active"></li>`;
+      $file = "dirs/ticket_lookup/ticket_lookup.php";
+    break;
     case "settings":
       $maintitle = "Account Settings";
       $mainbreadcrumb = `<li class="breadcrumb-item active">Settings</li>`;

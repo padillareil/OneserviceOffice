@@ -1,5 +1,5 @@
 <?php
-  require_once "../../../config/connection.php";
+  require_once "../../../../config/connection.php";
   session_start();
 
   $User     = $_SESSION['Uid'];
@@ -13,32 +13,22 @@
   $CurrentPage  = $_POST['CurrentPage'] ?? 1;
   $PageSize     = $_POST['PageSize'] ?? 20;
   $Search       = $_POST['Search'];
-  $Department   = $_POST['Department'] ?? '';
-  $Staff        = $_POST['Staff'] ?? '';
-  $DateFrom     = $_POST['DateFrom']?? '';
-  $DateTo       = $_POST['DateTo']?? '';
+  $Branch       = strtoupper($_POST['Branch'] ?? '');
+  $DateFrom     = $_POST['DateFrom'] ?? '';
+  $DateTo       = $_POST['DateTo'] ?? '';
 
 try {
   $conn->beginTransaction();
 
-    $fetch_clients = $conn->prepare("EXEC dbo.[INQUEUE_TICKETS_TEAMS] ?,?,?,?,?,?,?,?");
-    $fetch_clients->execute([
-        $User,
-        $CurrentPage,
-        $PageSize,
-        $Search,
-        $Department,
-        $Staff,
-        $DateFrom,
-        $DateTo
-    ]);
-    $get_allclients = $fetch_clients->fetchAll(PDO::FETCH_ASSOC);
+    $fetch_requestservice = $conn->prepare("EXEC dbo.[VALIDATE_TICKET_LOOKUP] ?,?,?,?,?,?,?");
+    $fetch_requestservice->execute([$User , $CurrentPage,$PageSize,$Search, $Branch, $DateFrom, $DateTo]);
+    $get_allrequest = $fetch_requestservice->fetchAll(PDO::FETCH_ASSOC);
 
   $conn->commit();
 
   $response = array(
     "isSuccess" => 'success',
-    "Data" => $get_allclients
+    "Data" => $get_allrequest
   );
   echo json_encode($response);
 

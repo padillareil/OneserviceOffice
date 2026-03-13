@@ -11,6 +11,7 @@
 	$Fullname = $_POST['Fullname'];
 	$Position = $_POST['Position'];
 	$Username = $_POST['Username'];
+	$Role     = $_POST['Role'];
 	$Password = hash_password($_POST['Password']);
 
 	try {
@@ -28,11 +29,12 @@
 	        exit('This account already exist.');
 	    }
 
-	    $ins_addaccount = $conn->prepare("EXEC dbo.[CREATE_STAFF] ?,?,?,?,?,?,?");
+	    $ins_addaccount = $conn->prepare("EXEC dbo.[CREATE_STAFF] ?,?,?,?,?,?,?,?");
 	    $ins_addaccount->execute([
 	        $Userid,
 	        $Fullname,
 	        $Position,
+	        $Role,
 	        $Username,
 	        $Password,
 	        $AccountStatus,

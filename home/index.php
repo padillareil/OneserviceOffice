@@ -4,10 +4,11 @@ require_once "../config/functions.php";
 session_start();
 
 
-if (!isset($_SESSION['Uid'])) {
-    header('Location: ../login.php');
+if (!isset($_SESSION['Uid']) || empty($_SESSION['Uid'])) {
+    header("Location: login.php");
     exit();
 }
+
 $User = $_SESSION['Uid'];
 
 try {
@@ -96,9 +97,27 @@ try {
                             </a>
                         </li> 
                         <li class="nav-item">
+                            <a href="#" class="nav-link" name="menu" menucode="ticket_lookup">
+                                <i class="nav-icon bi bi-search"></i>
+                                <p>Look Up Ticket</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                              <a href="#" class="nav-link" name="menu" menucode="accounts">
                                 <i class="nav-icon bi bi-people"></i>
                                 <p>Accounts</p>
+                            </a>
+                        </li> 
+                        <li class="nav-item">
+                             <a href="#" class="nav-link" name="menu" menucode="workassignment">
+                                <i class="nav-icon bi bi-journal-bookmark"></i>
+                                <p>Work Assignment</p>
+                            </a>
+                        </li> 
+                        <li class="nav-item">
+                             <a href="#" class="nav-link" name="menu" menucode="reports">
+                                <i class="nav-icon bi bi-flag"></i>
+                                <p>Report</p>
                             </a>
                         </li> 
                         <li class="nav-item">
@@ -107,12 +126,6 @@ try {
                                 <p>Settings</p>
                             </a>
                         </li> 
-                       <!--  <li class="nav-item">
-                             <a href="#" class="nav-link" name="menu" menucode="performance">
-                                <i class="nav-icon bi bi-graph-up-arrow"></i>
-                                <p>Report</p>
-                            </a>
-                        </li>  -->
                         <hr>
                         <li class="nav-item">
                             <a href="#" class="nav-link" onclick="logout()">

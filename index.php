@@ -4,10 +4,12 @@ require_once "config/functions.php";
 session_start();
 
 
-if (!isset($_SESSION['Uid'])) {
-    header('Location: login.php');
+if (!isset($_SESSION['Uid']) || empty($_SESSION['Uid'])) {
+    header("Location: login.php");
     exit();
 }
+
+
 $User = $_SESSION['Uid'];
 
 try {
@@ -67,7 +69,7 @@ try {
         <aside class="main-sidebar sidebar-dark-olive elevation-5">
             <p class="text-center brand-link">
                 <a href="index.php" style="text-decoration: none; color: inherit;">
-                    <img src="assets/image/logo/favicon.png" alt="User Logo" id="profile-image"style="width: 100px; height: 100px; object-fit: cover;">
+                    <img src="assets/image/logo/favicon.png" alt="User Logo" id="profile-image" style="width: 100px; height: 100px; object-fit: cover;">
                     <br>
                 </a>
                 <br>
@@ -88,6 +90,12 @@ try {
                             <a href="#" class="nav-link" name="menu" menucode="apply_service">
                                 <i class="nav-icon bi bi-file-earmark-post"></i>
                                 <p>Services</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" name="menu" menucode="ticket_lookup">
+                                <i class="nav-icon bi bi-search"></i>
+                                <p>Look Up Ticket</p>
                             </a>
                         </li>
                         <li class="nav-item">

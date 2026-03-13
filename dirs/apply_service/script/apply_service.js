@@ -10,7 +10,6 @@ function loadApplyServices() {
         $("#load_ApplyServices").html(data);
         loadDepartments();
         loadPostService();
-
         loadTeamsApplied_Open();
     });
 }
@@ -19,17 +18,34 @@ function loadApplyServices() {
 /*Function load request queing*/
 function loadreqQueue() {
     $("#mdl-req-queue").modal('show');
+    loadTeamsAppliedDepartment(); /*For display filter department requested*/
 }
+
 
 /*Function load resolved tickets*/
 function loadresolved() {
     $("#mdl-req-resolved").modal('show');
+    loadTeamsApplied_Resolved();
+    loadResolvedApplication();
 }
 
 /*Function load cancelled tickets*/
 function loadreqCancel() {
     $("#mdl-req-cancelled").modal('show');
+    loadTeamsApplied_Rejected();
+    loadRejectedApplication();
 }
+
+/*Function Date and Time Formating*/
+function formatDate(dateStr) {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day   = String(d.getDate()).padStart(2, "0");
+    const year  = d.getFullYear();
+    return `${month}/${day}/${year}`;
+}
+
 
 
 /*function load Departments*/
@@ -217,9 +233,9 @@ function filterDepartment(Department){
     }
 
 
+/********************************************************************************Modal Team In Queue Tickets*********************************************************************************/
 
-
-    /*Function Display all clients requested to the department*/
+    /*Function Display all staff requested to other departments*/
     var currentPage = 1;
     var pageSize = 20;
     var totalPages = 1;
@@ -237,6 +253,8 @@ function filterDepartment(Department){
         var Search = $("#search-request").val();
         var Department = $("#open-ticket-department").val();
         var Staff = $("#open-ticket-staff").val();
+        var DateFrom = $("#date-from-open").val();
+        var DateTo = $("#date-to-open").val();
         /* Show spinner */
         display.html(spinner);
         /* Delay request 200ms */
@@ -247,7 +265,9 @@ function filterDepartment(Department){
                 PageSize: pageSize,
                 Search: Search,
                 Staff: Staff,
-                Department: Department
+                Department: Department,
+                DateFrom: DateFrom,
+                DateTo: DateTo
             }, function(data){
 
                 let response;
@@ -261,7 +281,6 @@ function filterDepartment(Department){
                 }
 
                 if ($.trim(response.isSuccess) === "success") {
-
                     displayTeamsOpen_Tickets(response.Data);
                     currentPage = page;
 
@@ -292,14 +311,14 @@ function filterDepartment(Department){
         if (!data || data.length === 0) {
             display.html(`
                 <tr>
-                    <td colspan="4" class="text-center py-5">
+                    <td colspan="5" class="text-center py-5">
                       <div class="d-flex flex-column align-items-center text-muted">
                         <div class="mb-3" style="font-size: 40px; opacity: .35;">
-                          <i class="bi bi-people"></i>
+                          <i class="bi bi-sliders"></i>
                         </div>
-                        <div class="fw-semibold">No Record Found.</div>
+                        <div class="fw-semibold">Filter to view applied tickets.</div>
                         <div class="small opacity-75">
-                          No client records exist.
+                          Please filter and apply if no tickets displayed.
                         </div>
                       </div>
                     </td>
@@ -308,13 +327,36 @@ function filterDepartment(Department){
             return;
         }
 
-        data.forEach(client => {
+        data.forEach(tkt => {
+            // Determine class based on status
+            let statusBadge = ''; // will hold the badge HTML
+            switch(tkt.TicketStatus.toUpperCase()) {
+                case 'OPEN':
+                    statusBadge = `<span class="badge bg-info-subtle text-info">${tkt.TicketStatus}</span>`;
+                    break;
+                case 'RESOLVED':
+                    statusBadge = `<span class="badge bg-success-subtle text-success">${tkt.TicketStatus}</span>`;
+                    break;
+                case 'STAND BY':
+                    statusBadge = `<span class="badge bg-primary-subtle text-primary">${tkt.TicketStatus}</span>`;
+                    break;
+                case 'REJECTED':
+                    statusBadge = `<span class="badge bg-danger-subtle text-danger">${tkt.TicketStatus}</span>`;
+                    break;
+                case 'CANCELLED':
+                    statusBadge = `<span class="badge bg-secondary-subtle text-secondary">${tkt.TicketStatus}</span>`;
+                    break;
+                default:
+                    statusBadge = `<span class="badge bg-light text-dark">${tkt.TicketStatus}</span>`;
+            }
+
             display.append(`
-                <tr ondblclick='findCustomerRecord("${client.SysNum}")'>
-                    <td>${client.Fullname}</td>
-                    <td>${client.Position}</td>
-                    <td>${client.Branch}</td>
-                    <td>${client.Department}</td>
+                <tr ondblclick='findCustomerRecord("${tkt.SysNum}")'>
+                    <td>${tkt.TKTNumber}</td>
+                    <td>${tkt.Department}</td>
+                    <td>${tkt.Branch}</td>
+                    <td>${formatDate(tkt.DocDate)}</td>
+                    <td>${statusBadge}</td>
                 </tr>
                 `);
             });
@@ -323,151 +365,468 @@ function filterDepartment(Department){
 
 
 
-    /*Function to count page number page 1 of and so on*/
-    function updateModalTeamsPagination() {
-        $("#pagination-t-application").text("Page " + currentPage + " of " + totalPages);
-        if (currentPage <= 1) {
-            $("#li-prev").addClass("disabled");
+   /*Function to count page number page 1 of and so on*/
+   function updateModalTeamsPagination() {
+       $("#pagination-open-ticket").text("Page " + currentPage + " of " + totalPages);
+       if (currentPage <= 1) {
+           $("#li-prev").addClass("disabled");
+       } else {
+           $("#li-prev").removeClass("disabled");
+       }
+       if (currentPage >= totalPages) {
+           $("#li-next").addClass("disabled");
+       } else {
+           $("#li-next").removeClass("disabled");
+       }
+   }
+
+   /*Function to build list of pagination*/
+   function buildTeamsOpnNUmber() {
+       $("#page-info-openticket li.page-number").remove(); // remove old numbers
+       var prevLi = $("#btn-previewopen-ticket").parent();
+       for (var i = 1; i <= totalPages; i++) {
+           var activeClass = (i === currentPage) ? "active" : "";
+           var li = `
+               <li class="page-item page-number ${activeClass}">
+                   <a class="page-link" href="#" data-page="${i}">${i}</a>
+               </li>
+           `;
+           $(li).insertAfter(prevLi);
+           prevLi = prevLi.next();
+       }
+   }
+
+
+    /*load Imperial Branches*/
+    function loadTeamsAppliedDepartment() {
+      $.post("dirs/apply_service/actions/get_applied_department.php", {}, function(data) {
+        const response = JSON.parse(data);
+        if ($.trim(response.isSuccess) === "success") {
+          const branches = response.Data;
+          $("#open-ticket-department").html('<option selected value="">All</option>');
+          branches.forEach(dpt => {
+            $("#open-ticket-department").append(
+              $("<option>", {
+                value: dpt.TKTDepartment,
+                text: dpt.TKTDepartment
+              })
+            );
+          });
+
+
+          const teams = response.Teams;
+          $("#open-ticket-staff").html('<option selected value="">All</option>');
+          teams.forEach(team => {
+            $("#open-ticket-staff").append(
+              $("<option>", {
+                value: team.UserFullname,
+                text: team.UserFullname
+              })
+            );
+          });
         } else {
-            $("#li-prev").removeClass("disabled");
+          alert($.trim(response.Data));
         }
-        if (currentPage >= totalPages) {
-            $("#li-next").addClass("disabled");
-        } else {
-            $("#li-next").removeClass("disabled");
-        }
+      });
     }
 
-    /*Function to build list of pagination*/
-    function buildTeamsOpnNUmber() {
-        $("#page-info-t-application li.page-number").remove(); // remove old numbers
-        var prevLi = $("#btn-preview-client").parent();
-        for (var i = 1; i <= totalPages; i++) {
-            var activeClass = (i === currentPage) ? "active" : "";
-            var li = `
-                <li class="page-item page-number ${activeClass}">
-                    <a class="page-link" href="#" data-page="${i}">${i}</a>
-                </li>
-            `;
-            $(li).insertAfter(prevLi);
-            prevLi = prevLi.next();
-        }
+/********************************************************************************Modal Team In Queue Tickets*********************************************************************************/
+
+
+
+/********************************************************************************Modal Resolved Tickets created by Teams*********************************************************************/
+    /*Function Display all staff requested to other departments resolved*/
+    var currentPage = 1;
+    var pageSize = 20;
+    var totalPages = 1;
+    var display = $("#teams_resolved_tickets");
+
+    function loadTeamsApplied_Resolved(page = 1) {
+        var spinner = `
+            <tr>
+                <td colspan="5" class="text-center py-5">
+                    <p>Loading...</p>
+                  <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+                </td>
+            </tr>
+        `;
+        var Search = $("#search-resolve").val();
+        var Department = $("#resolved-ticket-department").val();
+        var Staff = $("#staff-resolved-ticket").val();
+        var DateFrom = $("#date-from-resolved").val();
+        var DateTo = $("#date-to-resolved").val();
+        /* Show spinner */
+        display.html(spinner);
+        /* Delay request 200ms */
+        setTimeout(function(){
+
+            $.post("dirs/apply_service/actions/get_team_resolved_tickets.php", {
+                CurrentPage: page,
+                PageSize: pageSize,
+                Search: Search,
+                Staff: Staff,
+                Department: Department,
+                DateFrom: DateFrom,
+                DateTo: DateTo
+            }, function(data){
+
+                let response;
+
+                try {
+                    response = JSON.parse(data);
+                } catch (e) {
+                    display.html("");
+                    toastr.error("Server error.", "Error");
+                    return;
+                }
+
+                if ($.trim(response.isSuccess) === "success") {
+                    displayTeamsResolved_Tickets(response.Data);
+                    currentPage = page;
+
+                    if (response.Data && response.Data.length > 0) {
+                        totalPages = parseInt(response.Data[0].TotalPages);
+                    } else {
+                        totalPages = 1;
+                    }
+
+                    buildTeamsOpnNUmberResolved();
+                    updateModalTeamsPaginationResolved();
+
+                } else {
+                    display.html("");
+                    toastr.error($.trim(response.Data), "Error");
+                }
+
+            });
+        }, 200); // 200ms delay
     }
 
 
-// function load_modal(valueStudentID, valueOperation){
-//     $("#modal-add-student").modal('show');
-//     $("#frm-add-student").attr("operation", valueOperation);
-//     $("#frm-add-student").attr("studentid", valueStudentID);
+    /* Render Blocked Accounts into Table */
+    function displayTeamsResolved_Tickets(data) {
+        const display = $("#teams_resolved_tickets");
+        display.empty();
 
-//     if(valueOperation==0){
-//         $("#frm-add-student").trigger("reset");
-//         $("#material_header").html("New Student");
-//         $("#btn_save").html("Save");
-//     }else if(valueOperation==1){
-//         $("#material_header").html("Update Student");
-//         $("#btn_save").html("Update");
-//         get_student(valueStudentID);
-//     }
-// }
+        if (!data || data.length === 0) {
+            display.html(`
+                <tr>
+                    <td colspan="5" class="text-center py-5">
+                      <div class="d-flex flex-column align-items-center text-muted">
+                        <div class="mb-3" style="font-size: 40px; opacity: .35;">
+                          <i class="bi bi-sliders"></i>
+                        </div>
+                        <div class="fw-semibold">Filter to view applied tickets.</div>
+                        <div class="small opacity-75">
+                          Please filter and apply if no tickets displayed.
+                        </div>
+                      </div>
+                    </td>
+                </tr>
+            `);
+            return;
+        }
 
-// function get_student(StudentID){
-//     $.post("registry/sipedept/student/actions/get_student.php",{
-//         StudentID : StudentID
-//     },function(data){
-//         response = JSON.parse(data);
-//         if(jQuery.trim(response.isSuccess) == "success"){
-//             $("#StudentName").val(response.Data.StudentName);
-//             $("#Address").val(response.Data.Address);
-//             $("#Age").val(response.Data.Age);
-//             $("#Status").val(response.Data.Status);
-//         }else{
-//             alert(jQuery.trim(response.Data));
-//         }
-//     });
-// }
+        data.forEach(tkt => {
+            // Determine class based on status
+            let statusBadge = ''; // will hold the badge HTML
+            switch(tkt.TicketStatus.toUpperCase()) {
+                case 'OPEN':
+                    statusBadge = `<span class="badge bg-info-subtle text-info">${tkt.TicketStatus}</span>`;
+                    break;
+                case 'RESOLVED':
+                    statusBadge = `<span class="badge bg-success-subtle text-success">${tkt.TicketStatus}</span>`;
+                    break;
+                case 'STAND BY':
+                    statusBadge = `<span class="badge bg-primary-subtle text-primary">${tkt.TicketStatus}</span>`;
+                    break;
+                case 'REJECTED':
+                    statusBadge = `<span class="badge bg-danger-subtle text-danger">${tkt.TicketStatus}</span>`;
+                    break;
+                case 'CANCELLED':
+                    statusBadge = `<span class="badge bg-secondary-subtle text-secondary">${tkt.TicketStatus}</span>`;
+                    break;
+                default:
+                    statusBadge = `<span class="badge bg-light text-dark">${tkt.TicketStatus}</span>`;
+            }
 
-
-// /*get api*/
-// function get_student(StudentID) {
-//     $.getJSON("registry/sipedept/student/actions/get_student.php", { StudentID: StudentID })
-//         .done(function(response) {
-//             if (response.isSuccess === "success") {
-//                 $("#StudentName").val(response.Data.StudentName);
-//                 $("#Address").val(response.Data.Address);
-//                 $("#Age").val(response.Data.Age);
-//                 $("#Status").val(response.Data.Status);
-//             } else {
-//                 alert(response.Data);
-//             }
-//         })
-//         .fail(function(jqXHR, textStatus, errorThrown) {
-//             console.error("AJAX Error:", textStatus, errorThrown);
-//             alert("Failed to retrieve student information. Please try again.");
-//         });
-// }
-
-
-
-
-// function update_student() {
-//     var StudentID   = $("#frm-add-student").attr("studentid");
-//     var StudentName = $("#StudentName").val();
-//     var Address     = $("#Address").val();
-//     var Age         = $("#Age").val();
-//     var Status      = $("#Status").val();
-
-//     $.post("registry/sipedept/student/actions/update_student.php", {
-//         StudentID   : StudentID,
-//         StudentName : StudentName,
-//         Address     : Address,
-//         Age         : Age,
-//         Status      : Status,
-//     }, function(data) {
-//         if(jQuery.trim(data) === "success") {
-//             $("#modal-add-student").modal('hide');
-//             load_student_list(); 
-//             alert('Update successful');
-//         } else {
-//             alert(data);
-//         }
-//     });
-// }
+            display.append(`
+                <tr ondblclick='findCustomerRecord("${tkt.SysNum}")'>
+                    <td>${tkt.TKTNumber}</td>
+                    <td>${tkt.Department}</td>
+                    <td>${tkt.Branch}</td>
+                    <td>${formatDate(tkt.DocDate)}</td>
+                    <td>${statusBadge}</td>
+                </tr>
+                `);
+            });
+        }
 
 
-// function delete_student(StudentID){
-//     $.post("registry/sipedept/student/actions/delete_student.php", {
-//         StudentID : StudentID
-//     },function(data){
-//         if(jQuery.trim(data) == "success"){
-//             $("#modal-add-student").modal('hide');
-//             load_student_list();
-//             alert('delete success');   
-//         }else{
-//             alert(data); 
-//         }
-//     });
-// }
+     /*Function to count page number page 1 of and so on*/
+     function updateModalTeamsPaginationResolved() {
+         $("#pagination-r-application").text("Page " + currentPage + " of " + totalPages);
+         if (currentPage <= 1) {
+             $("#li-prev").addClass("disabled");
+         } else {
+             $("#li-prev").removeClass("disabled");
+         }
+         if (currentPage >= totalPages) {
+             $("#li-next").addClass("disabled");
+         } else {
+             $("#li-next").removeClass("disabled");
+         }
+     }
 
-// function save_student(){
-//     var StudentName = $("#StudentName").val();
-//     var Address     = $("#Address").val();
-//     var Age         = $("#Age").val();
-//     var Status      = $("#Status").val();
+     /*Function to build list of pagination*/
+     function buildTeamsOpnNUmberResolved() {
+         $("#page-info-r-application li.page-number").remove(); // remove old numbers
+         var prevLi = $("#btn-preview-r-application").parent();
+         for (var i = 1; i <= totalPages; i++) {
+             var activeClass = (i === currentPage) ? "active" : "";
+             var li = `
+                 <li class="page-item page-number ${activeClass}">
+                     <a class="page-link" href="#" data-page="${i}">${i}</a>
+                 </li>
+             `;
+             $(li).insertAfter(prevLi);
+             prevLi = prevLi.next();
+         }
+     }
 
-//     $.post("registry/sipedept/student/actions/save_student.php", {
-//         StudentName : StudentName,
-//         Address     : Address,
-//         Age         : Age,
-//         Status      : Status,
-//     }, function(data){
-//         if($.trim(data) == "OK"){
-//             alert("Student added.");
-//             $("#modal-add-student").modal("hide");
-//             load_student_list();
-//         }else{
-//             alert("Error: " + data);
-//         }
-//     });
-// }
 
+     /*load Resolved Tickets Department and staffs*/
+     function loadResolvedApplication() {
+       $.post("dirs/apply_service/actions/get_applied_department.php", {}, function(data) {
+         const response = JSON.parse(data);
+         if ($.trim(response.isSuccess) === "success") {
+           const branches = response.Data;
+           $("#resolved-ticket-department").html('<option selected value="">All</option>');
+           branches.forEach(dpt => {
+             $("#resolved-ticket-department").append(
+               $("<option>", {
+                 value: dpt.TKTDepartment,
+                 text: dpt.TKTDepartment
+               })
+             );
+           });
+
+
+           const teams = response.Teams;
+           $("#staff-resolved-ticket").html('<option selected value="">All</option>');
+           teams.forEach(team => {
+             $("#staff-resolved-ticket").append(
+               $("<option>", {
+                 value: team.UserFullname,
+                 text: team.UserFullname
+               })
+             );
+           });
+         } else {
+           alert($.trim(response.Data));
+         }
+       });
+     }
+
+
+
+/********************************************************************************Modal Resolved Tickets created by Teams*********************************************************************/
+
+
+
+
+     /********************************************************************************Modal Reject Tickets created by Teams*********************************************************************/
+         /*Function Display all staff requested to other departments rejected*/
+         var currentPage = 1;
+         var pageSize = 20;
+         var totalPages = 1;
+         var display = $("#teams_rejected_tickets");
+
+         function loadTeamsApplied_Rejected(page = 1) {
+             var spinner = `
+                 <tr>
+                     <td colspan="5" class="text-center py-5">
+                         <p>Loading...</p>
+                       <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+                     </td>
+                 </tr>
+             `;
+             var Search = $("#search-rejected").val();
+             var Department = $("#reject-ticket-department").val();
+             var Staff = $("#staff-reject-ticket").val();
+             var DateFrom = $("#date-from-reject").val();
+             var DateTo = $("#date-to-reject").val();
+             /* Show spinner */
+             display.html(spinner);
+             /* Delay request 200ms */
+             setTimeout(function(){
+
+                 $.post("dirs/apply_service/actions/get_team_reject_tickets.php", {
+                     CurrentPage: page,
+                     PageSize: pageSize,
+                     Search: Search,
+                     Staff: Staff,
+                     Department: Department,
+                     DateFrom: DateFrom,
+                     DateTo: DateTo
+                 }, function(data){
+
+                     let response;
+
+                     try {
+                         response = JSON.parse(data);
+                     } catch (e) {
+                         display.html("");
+                         toastr.error("Server error.", "Error");
+                         return;
+                     }
+
+                     if ($.trim(response.isSuccess) === "success") {
+                         displayTeamsReject_Tickets(response.Data);
+                         currentPage = page;
+
+                         if (response.Data && response.Data.length > 0) {
+                             totalPages = parseInt(response.Data[0].TotalPages);
+                         } else {
+                             totalPages = 1;
+                         }
+
+                         buildTeamsOpnNUmberReject();
+                         updateModalTeamsPaginationReject();
+
+                     } else {
+                         display.html("");
+                         toastr.error($.trim(response.Data), "Error");
+                     }
+
+                 });
+             }, 200); // 200ms delay
+         }
+
+
+         /* Render Blocked Accounts into Table */
+         function displayTeamsReject_Tickets(data) {
+             const display = $("#teams_rejected_tickets");
+             display.empty();
+
+             if (!data || data.length === 0) {
+                 display.html(`
+                     <tr>
+                         <td colspan="5" class="text-center py-5">
+                           <div class="d-flex flex-column align-items-center text-muted">
+                             <div class="mb-3" style="font-size: 40px; opacity: .35;">
+                               <i class="bi bi-sliders"></i>
+                             </div>
+                             <div class="fw-semibold">Filter to view applied tickets.</div>
+                             <div class="small opacity-75">
+                               Please filter and apply if no tickets displayed.
+                             </div>
+                           </div>
+                         </td>
+                     </tr>
+                 `);
+                 return;
+             }
+
+             data.forEach(tkt => {
+                 // Determine class based on status
+                 let statusBadge = ''; // will hold the badge HTML
+                 switch(tkt.TicketStatus.toUpperCase()) {
+                     case 'OPEN':
+                         statusBadge = `<span class="badge bg-info-subtle text-info">${tkt.TicketStatus}</span>`;
+                         break;
+                     case 'RESOLVED':
+                         statusBadge = `<span class="badge bg-success-subtle text-success">${tkt.TicketStatus}</span>`;
+                         break;
+                     case 'STAND BY':
+                         statusBadge = `<span class="badge bg-primary-subtle text-primary">${tkt.TicketStatus}</span>`;
+                         break;
+                     case 'REJECTED':
+                         statusBadge = `<span class="badge bg-danger-subtle text-danger">${tkt.TicketStatus}</span>`;
+                         break;
+                     case 'CANCELLED':
+                         statusBadge = `<span class="badge bg-secondary-subtle text-secondary">${tkt.TicketStatus}</span>`;
+                         break;
+                     default:
+                         statusBadge = `<span class="badge bg-light text-dark">${tkt.TicketStatus}</span>`;
+                 }
+
+                 display.append(`
+                     <tr ondblclick='findCustomerRecord("${tkt.SysNum}")'>
+                         <td>${tkt.TKTNumber}</td>
+                         <td>${tkt.Department}</td>
+                         <td>${tkt.Branch}</td>
+                         <td>${formatDate(tkt.DocDate)}</td>
+                         <td>${statusBadge}</td>
+                     </tr>
+                     `);
+                 });
+             }
+
+
+          /*Function to count page number page 1 of and so on*/
+          function updateModalTeamsPaginationReject() {
+              $("#pagination-rejected-application").text("Page " + currentPage + " of " + totalPages);
+              if (currentPage <= 1) {
+                  $("#li-prev").addClass("disabled");
+              } else {
+                  $("#li-prev").removeClass("disabled");
+              }
+              if (currentPage >= totalPages) {
+                  $("#li-next").addClass("disabled");
+              } else {
+                  $("#li-next").removeClass("disabled");
+              }
+          }
+
+          /*Function to build list of pagination*/
+          function buildTeamsOpnNUmberReject() {
+              $("#page-info-rejected li.page-number").remove(); // remove old numbers
+              var prevLi = $("#btn-preview-rejected").parent();
+              for (var i = 1; i <= totalPages; i++) {
+                  var activeClass = (i === currentPage) ? "active" : "";
+                  var li = `
+                      <li class="page-item page-number ${activeClass}">
+                          <a class="page-link" href="#" data-page="${i}">${i}</a>
+                      </li>
+                  `;
+                  $(li).insertAfter(prevLi);
+                  prevLi = prevLi.next();
+              }
+          }
+
+
+          /*load Resolved Tickets Department and staffs*/
+          function loadRejectedApplication() {
+            $.post("dirs/apply_service/actions/get_applied_department.php", {}, function(data) {
+              const response = JSON.parse(data);
+              if ($.trim(response.isSuccess) === "success") {
+                const branches = response.Data;
+                $("#rejected-ticket-department").html('<option selected value="">All</option>');
+                branches.forEach(dpt => {
+                  $("#rejected-ticket-department").append(
+                    $("<option>", {
+                      value: dpt.TKTDepartment,
+                      text: dpt.TKTDepartment
+                    })
+                  );
+                });
+
+
+                const teams = response.Teams;
+                $("#staff-rejected-ticket").html('<option selected value="">All</option>');
+                teams.forEach(team => {
+                  $("#staff-rejected-ticket").append(
+                    $("<option>", {
+                      value: team.UserFullname,
+                      text: team.UserFullname
+                    })
+                  );
+                });
+              } else {
+                alert($.trim(response.Data));
+              }
+            });
+          }
+
+     /********************************************************************************Modal Resolved Tickets created by Teams*********************************************************************/

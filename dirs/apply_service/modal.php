@@ -23,59 +23,80 @@
                 <span class="small text-muted">to</span>
                 <input type="date" name="date-to-open" id="date-to-open" class="form-control form-control-sm">
               </div>
-              <button type="button" class="btn btn-sm btn-success">Apply</button>
-              <button type="button" class="btn btn-sm btn-primary">Refresh</button>
+              <button type="button" class="btn btn-sm btn-success" onclick="loadTeamsApplied_Open()">Apply</button>
+              <button type="button" class="btn btn-sm btn-primary" onclick="refreshAllOpenTicket()">Refresh</button>
             </div>
           </div>
           <div class="card-body">
             <div class="table-responsive overscroll-auto" style="height: 55vh;">
-              <table class="table table-sm table-hovered">
+              <table class="table table-sm table-hover">
                 <thead>
                   <tr>
-                    <th>Ticket No.</th>
-                    <th>Department</th>
-                    <th>Client</th>
-                    <th>Date</th>
-                    <th>Status</th>
+                    <th class="sticky-top">Ticket No.</th>
+                    <th class="sticky-top">Department</th>
+                    <th class="sticky-top">Client</th>
+                    <th class="sticky-top">Date</th>
+                    <th class="sticky-top">Status</th>
                   </tr>
                 </thead>
                 <tbody id="teams_open_tickets">
-                  <tr>
-                    <td colspan="5" class="text-center py-5">
-                      <div class="d-flex flex-column align-items-center text-muted">
-                        <div class="mb-3" style="font-size: 40px; opacity: .35;">
-                          <i class="bi bi-sliders"></i>
-                        </div>
-                        <div class="fw-semibold">Filter to view applied tickets.</div>
-                        <div class="small opacity-75">
-                          Please filter and apply if no tickets displayed.
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
+                
                 </tbody>
               </table>
             </div>
           </div>
-          <div class="card-footer">
-            <nav>
-               <ul class="pagination" id="pagination-t-application">
-                  <li class="page-item">
-                      <a class="page-link" href="#" id="btn-preview-t-application">Previous</a> 
-                  </li>
-                  <li class="page-item">
-                      <a class="page-link" href="#" id="btn-next-t-application">Next</a>
-                  </li>
-               </ul>
-            </nav>
-            <div id="page-info-t-application" class="mt-3 small text-muted">  
-            </div>
-          </div>
+          
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-between align-items-center">
+        <nav>
+          <ul class="pagination" id="pagination-open-ticket">
+             <li class="page-item" id="li-prev">
+                 <a class="page-link" href="#" id="btn-previewopen-ticket">Previous</a> 
+             </li>
+             <li class="page-item" id="li-next">
+                 <a class="page-link" href="#" id="btn-nextviewopen-ticket">Next</a>
+             </li>
+          </ul>
+        </nav> 
+        <div id="page-info-openticket" class="mt-3 small text-muted">  
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  /*Script for Searching ticket*/
+  $("#search-request").on("keydown", function(e) {
+      if (e.key === "Enter") {
+          loadTeamsApplied_Open();
+      }
+  });
+
+  /*Function filter tickets teams applied*/
+  $("#open-ticket-department").on("change", function() {
+      loadTeamsApplied_Open();
+  });
+
+  /*Function filter staff ticket applied*/
+  $("#open-ticket-staff").on("change", function() {
+      loadTeamsApplied_Open();
+  });
+
+  /*Function reload Open Ticket modal*/
+  function refreshAllOpenTicket() {
+    loadTeamsApplied_Open();
+    $("#search-request").val('');
+    $("#open-ticket-department").val('');
+    $("#open-ticket-staff").val('');
+    $("#date-from-open").val('');
+    $("#date-to-open").val('');
+
+
+  }
+</script>
+
 
 
 <!-- Resolved Ticekts Modal -->
@@ -83,7 +104,7 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="team-req-mdl-title">Team Resolved Ticket</h1>
+        <h1 class="modal-title fs-5">Team Resolved Ticket</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -91,26 +112,26 @@
           <div class="card-header">
             <div class="d-flex flex-wrap align-items-center gap-2">
               <input type="search" name="search-resolve" id="search-resolve" class="form-control form-control-sm" placeholder="Search request..." style="width: 150px;">
-              <select class="form-select form-select-sm" style="width: 150px;" title="Requested Department">
+              <select class="form-select form-select-sm" style="width: 150px;" title="Requested Department" id="resolved-ticket-department">
                 <option selected disabled>Department</option>
               </select>
-              <select class="form-select form-select-sm" style="width: 150px;" title="Prepared by Staff">
+              <select class="form-select form-select-sm" style="width: 150px;" title="Prepared by Staff" id="staff-resolved-ticket">
                 <option selected disabled>Filter by Staff</option>
               </select>
               <div class="d-flex align-items-center gap-1">
                 <span class="small text-muted">from</span>
-                <input type="date" name="date-from" id="date-from" class="form-control form-control-sm">
+                <input type="date" name="date-from-resolved" id="date-from-resolved" class="form-control form-control-sm">
                 <span class="small text-muted">to</span>
-                <input type="date" name="date-to" id="date-to" class="form-control form-control-sm">
+                <input type="date" name="date-to-resolved" id="date-to-resolved" class="form-control form-control-sm">
               </div>
-              <button type="button" class="btn btn-sm btn-success">Apply</button>
-              <button type="button" class="btn btn-sm btn-primary">Refresh</button>
+              <button type="button" class="btn btn-sm btn-success" onclick="loadTeamsApplied_Resolved()">Apply</button>
+              <button type="button" class="btn btn-sm btn-primary" onclick="refreshAllResolvedTicket()">Refresh</button>
               <button type="button" class="btn btn-sm btn-danger">Clear</button>
             </div>
           </div>
           <div class="card-body">
             <div class="table-responsive overscroll-auto" style="height: 55vh;">
-              <table class="table table-sm table-hovered">
+              <table class="table table-sm table-hover">
                 <thead>
                   <tr>
                     <th>Ticket No.</th>
@@ -120,20 +141,7 @@
                     <th>Status</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td colspan="5" class="text-center py-5">
-                      <div class="d-flex flex-column align-items-center text-muted">
-                        <div class="mb-3" style="font-size: 40px; opacity: .35;">
-                          <i class="bi bi-sliders"></i>
-                        </div>
-                        <div class="fw-semibold">Filter to view resolved tickets.</div>
-                        <div class="small opacity-75">
-                          Please filter and apply if no tickets displayed.
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
+                <tbody id="teams_resolved_tickets">
                 </tbody>
               </table>
             </div>
@@ -158,9 +166,142 @@
   </div>
 </div>
 
+<script>
+  /*Script for Searching ticket*/
+  $("#search-resolve").on("keydown", function(e) {
+      if (e.key === "Enter") {
+          loadTeamsApplied_Resolved();
+      }
+  });
+
+  /*Function filter tickets teams applied*/
+  $("#resolved-ticket-department").on("change", function() {
+      loadTeamsApplied_Resolved();
+  });
+
+  /*Function filter staff ticket applied*/
+  $("#staff-resolved-ticket").on("change", function() {
+      loadTeamsApplied_Resolved();
+  });
+
+  /*Function reload Open Ticket modal*/
+  function refreshAllResolvedTicket() {
+    loadTeamsApplied_Resolved();
+    $("#search-resolve").val('');
+    $("#resolved-ticket-department").val('');
+    $("#staff-resolved-ticket").val('');
+    $("#date-from-resolved").val('');
+    $("#date-to-resolved").val('');
+
+
+  }
+</script>
+
+
+
+<!------------------------------------------------------- Resolved Ticekts Modal -------------------------------------------------------------------------------------->
+<div class="modal fade" id="mdl-req-cancelled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="team-req-mdl-title" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Team Cancelled Ticket</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <input type="search" name="search-rejected" id="search-rejected" class="form-control form-control-sm" placeholder="Search request..." style="width: 150px;">
+              <select class="form-select form-select-sm" style="width: 150px;" title="Requested Department" id="rejected-ticket-department">
+                <option selected disabled>Department</option>
+              </select>
+              <select class="form-select form-select-sm" style="width: 150px;" title="Prepared by Staff" id="staff-rejected-ticket">
+                <option selected disabled>Filter by Staff</option>
+              </select>
+              <div class="d-flex align-items-center gap-1">
+                <span class="small text-muted">from</span>
+                <input type="date" name="date-from-rejected" id="date-from-rejected" class="form-control form-control-sm">
+                <span class="small text-muted">to</span>
+                <input type="date" name="date-to-rejected" id="date-to-rejected" class="form-control form-control-sm">
+              </div>
+              <button type="button" class="btn btn-sm btn-success" onclick="loadTeamsApplied_Rejected()">Apply</button>
+              <button type="button" class="btn btn-sm btn-primary" onclick="refreshAllRejectedTicket()">Refresh</button>
+              <button type="button" class="btn btn-sm btn-danger">Clear</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive overscroll-auto" style="height: 55vh;">
+              <table class="table table-sm table-hover">
+                <thead>
+                  <tr>
+                    <th>Ticket No.</th>
+                    <th>Department</th>
+                    <th>Client</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="teams_rejected_tickets">
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-footer">
+            <nav>
+               <ul class="pagination" id="pagination-rejected-application">
+                  <li class="page-item">
+                      <a class="page-link" href="#" id="btn-preview-rejected">Previous</a> 
+                  </li>
+                  <li class="page-item">
+                      <a class="page-link" href="#" id="btn-next-rejected">Next</a>
+                  </li>
+               </ul>
+            </nav>
+            <div id="page-info-rejected" class="mt-3 small text-muted">  
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /*Script for Searching ticket*/
+  $("#search-rejected").on("keydown", function(e) {
+      if (e.key === "Enter") {
+          loadTeamsApplied_Rejected();
+      }
+  });
+
+  /*Function filter tickets teams applied*/
+  $("#rejected-ticket-department").on("change", function() {
+      loadTeamsApplied_Rejected();
+  });
+
+  /*Function filter staff ticket applied*/
+  $("#staff-rejected-ticket").on("change", function() {
+      loadTeamsApplied_Rejected();
+  });
+
+  /*Function reload Open Ticket modal*/
+  function refreshAllRejectedTicket() {
+    loadTeamsApplied_Rejected();
+    $("#search-resolve").val('');
+    $("#rejected-ticket-department").val('');
+    $("#staff-rejected-ticket").val('');
+    $("#date-from-rejected").val('');
+    $("#date-to-rejected").val('');
+
+
+  }
+</script>
+<!------------------------------------------------------- Resolved Ticekts Modal -------------------------------------------------------------------------------------->
+
+
 
 <!-- Resolved Ticekts Modal -->
-<div class="modal fade" id="mdl-req-cancelled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="team-req-mdl-title" aria-hidden="true">
+<!-- <div class="modal fade" id="mdl-req-cancelled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="team-req-mdl-title" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
@@ -237,11 +378,11 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 
 <!-- Modal Apply Ticket -->
-<form id="frm-apply-ticket">
+<!-- <form id="frm-apply-ticket">
   <div class="modal fade" id="mdl-create-ticket" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="mdl-title-request" aria-hidden="true">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
@@ -280,7 +421,7 @@
                 </div>
               </div>
 
-              <input type="hidden" id="ticket-id-number"><!-- Ticket number -->
+              <input type="hidden" id="ticket-id-number">
 
               <div class="row justify-content-between d-flex">
                 <div class="col-md-4">
@@ -324,7 +465,6 @@
                   <i class="bi bi-x-circle"></i> Cancel
                 </button>
 
-                <!-- Push this to the right -->
                 <button type="button" class="btn btn-secondary ms-auto" id="btn-reset" onclick="resetDescription()">
                   <i class="bi bi-arrow-clockwise"></i> Clear
                 </button>
@@ -336,7 +476,7 @@
       </div>
     </div>
   </div>
-</form>
+</form> -->
 
 
 
@@ -480,3 +620,6 @@ $("#frm-apply-ticket").submit(function(event) {
     $('#file-preview').empty();
 }*/
 </script>
+
+
+

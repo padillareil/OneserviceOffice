@@ -51,9 +51,9 @@
           <tr class="table-info">
             <th class="sticky-top" style="width:40px;"></th> <!-- checkbox or expand -->
             <th class="sticky-top">Ticket No.</th>
+            <th class="sticky-top">Branch</th>
             <th class="sticky-top">Client</th>
             <th class="sticky-top">Service Type</th>
-            <th class="sticky-top">Branch</th>
             <th class="sticky-top text-center">Date Created</th>
             <th class="sticky-top">Status</th>
             <th class="sticky-top" style="width:120px;">Action</th>

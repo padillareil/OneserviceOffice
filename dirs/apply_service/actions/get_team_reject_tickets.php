@@ -21,7 +21,7 @@
 try {
   $conn->beginTransaction();
 
-    $fetch_clients = $conn->prepare("EXEC dbo.[INQUEUE_TICKETS_TEAMS] ?,?,?,?,?,?,?,?");
+    $fetch_clients = $conn->prepare("EXEC dbo.[REJECTED_TICKETS_TEAMS] ?,?,?,?,?,?,?,?");
     $fetch_clients->execute([
         $User,
         $CurrentPage,

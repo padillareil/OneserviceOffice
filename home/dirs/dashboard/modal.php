@@ -80,7 +80,7 @@
                       <div class="col-md-3 ps-md-4">
                         <div class="text-center">
                           <div class="mb-3">
-                            <img src="../assets/image/uploads/man.png" alt="Department Head Image" class="rounded-circle shadow-sm" style="width: 100px; height: 100px; object-fit: cover;">
+                            <img src="../assets/image/uploads/noimage.avif" alt="Department Head Image" class="rounded-circle shadow-sm" style="width: 100px; height: 100px; object-fit: cover;">
                           </div>
                           <h6 class="fw-bold mb-1" id="manager-name"></h6>
                           <div class="fw-semibold text-primary" id="manager-position"></div>

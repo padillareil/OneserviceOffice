@@ -62,13 +62,15 @@
     var Position = $("#staff-position").val();
     var Username = $("#staff-username").val();
     var Password = $("#staff-password").val();
+    var Role = 3;
 
     $.post("dirs/accounts/actions/save_account.php",{
 
         Fullname : Fullname,
         Position : Position,
         Username : Username,
-        Password : Password
+        Password : Password,
+        Role : Role
 
     }, function(data){
 

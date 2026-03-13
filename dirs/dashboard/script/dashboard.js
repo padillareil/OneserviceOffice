@@ -201,9 +201,9 @@ function displayServices(data) {
                 </div>
                 </td>
                 <td ondblclick='loadContent("${srv.SysNum}")'>${srv.TKTNumber}</td>
+                <td ondblclick='loadContent("${srv.SysNum}")'>${srv.Branch}</td>
                 <td ondblclick='loadContent("${srv.SysNum}")'>${srv.RequestingOffice}</td>
                 <td ondblclick='loadContent("${srv.SysNum}")'>${srv.ServiceType}</td>
-                <td ondblclick='loadContent("${srv.SysNum}")'>${srv.Branch}</td>
                 <td class="text-center" ondblclick='loadContent("${srv.SysNum}")'>${formatDate(srv.DocDate)}</td>
                 <td ondblclick='loadContent("${srv.SysNum}")' class="text-center">${statusBadge}</td>
                 <td class ="text-center">
