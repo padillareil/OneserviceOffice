@@ -46,7 +46,7 @@
          if (role === 1) {
            window.location.assign("admin/index.php");
          }else if (role === 2){
-           window.location.assign("home/index.php");
+           window.location.assign("department_head/index.php");
          } else if (role === 3){
            window.location.assign("index.php");
          } else {
