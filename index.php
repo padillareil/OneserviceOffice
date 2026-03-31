@@ -33,14 +33,18 @@ try {
   <link rel="stylesheet" href="assets/plugins/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" type="text/css" href="assets/plugins/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="assets/css/adminlte.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/plugins/jquery-ui-latest/jquery-ui.min.css">
   <link rel="stylesheet" href="assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
   <link rel="stylesheet" href="assets/plugins/daterangepicker/daterangepicker.css">
   <link rel="stylesheet" href="assets/plugins/bootstrap-icons/font/bootstrap-icons.css">
+  <link rel="stylesheet" type="text/css" href="assets/plugins/bs-stepper/css/bs-stepper.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/plugins/pace/pace-theme-default.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/plugins/jsgrid/jsgrid-theme.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/plugins/dropzone/dropzone.css">
   <link rel="stylesheet" href="assets/plugins/datatables/datatables.min.css">
   <link rel="stylesheet" href="assets/css/datatables.min.css">
   <link rel="stylesheet" href="assets/plugins/toastr/toastr.min.css">
   <link rel="stylesheet" href="assets/plugins/sweetalert2/sweetalert2.min.css">
-  <link rel="stylesheet" href="assets/plugins/daterangepicker/daterangepicker.css">
   <link rel="stylesheet" href="assets/plugins/summernote/summernote-lite.min.css">
   <link rel="stylesheet" href="assets/plugins/datepicker/jquery-ui.structure.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
@@ -148,11 +152,18 @@ try {
 
 <script src="assets/js/jquery.min.js"></script>
 <script src="assets/plugins/sweetalert2/sweetalert2.min.js"></script>
+<script src="assets/plugins/jquery-steps/jquery.steps.min.js"></script>
+<script src="assets/plugins/jquery-ui-latest/jquery-ui.min.js"></script>
 <script src="assets/plugins/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/plugins/toastr/toastr.min.js"></script>
 <script src="assets/plugins/chart.js/Chart.min.js"></script>
 <script src="assets/plugins/moment/moment.min.js"></script>
-<script src="assets/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="assets/plugins/pace/pace.min.js"></script>
+<script src="assets/plugins/bs-stepper/js/bs-stepper.min.js"></script>
+<script src="assets/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="assets/plugins/jszip/jszip.min.js"></script>
+<script src="assets/plugins/jsgrid/jsgrid.min.js"></script>
+<script src="assets/plugins/dropzone/dropzone.js"></script>
 <script src="assets/plugins/datatables/datatables.min.js"></script>
 <script src="assets/plugins/daterangepicker/daterangepicker.js"></script>
 <script src="assets/plugins/summernote/summernote-lite.min.js"></script>

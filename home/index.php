@@ -5,7 +5,7 @@ session_start();
 
 
 if (!isset($_SESSION['Uid']) || empty($_SESSION['Uid'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -32,18 +32,22 @@ try {
   <link rel="stylesheet" href="../assets/plugins/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" type="text/css" href="../assets/plugins/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../assets/css/adminlte.min.css">
+  <link rel="stylesheet" type="text/css" href="../assets/plugins/jquery-ui-latest/jquery-ui.min.css">
   <link rel="stylesheet" href="../assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
   <link rel="stylesheet" href="../assets/plugins/daterangepicker/daterangepicker.css">
   <link rel="stylesheet" href="../assets/plugins/bootstrap-icons/font/bootstrap-icons.css">
+  <link rel="stylesheet" type="text/css" href="../assets/plugins/bs-stepper/css/bs-stepper.min.css">
+  <link rel="stylesheet" type="text/css" href="../assets/plugins/pace/pace-theme-default.min.css">
+  <link rel="stylesheet" type="text/css" href="../assets/plugins/jsgrid/jsgrid-theme.min.css">
+  <link rel="stylesheet" type="text/css" href="../assets/plugins/dropzone/dropzone.css">
   <link rel="stylesheet" href="../assets/plugins/datatables/datatables.min.css">
   <link rel="stylesheet" href="../assets/css/datatables.min.css">
   <link rel="stylesheet" href="../assets/plugins/toastr/toastr.min.css">
   <link rel="stylesheet" href="../assets/plugins/sweetalert2/sweetalert2.min.css">
-  <link rel="stylesheet" href="../assets/plugins/daterangepicker/daterangepicker.css">
   <link rel="stylesheet" href="../assets/plugins/summernote/summernote-lite.min.css">
   <link rel="stylesheet" href="../assets/plugins/datepicker/jquery-ui.structure.min.css">
   <link rel="stylesheet" href="../assets/css/style.css">
-  <link rel="icon" href="../assets/image/logo/favicon.png">
+  <link rel="icon" href="assets/image/logo/favicon.png">
 
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -64,7 +68,7 @@ try {
                 </li>
             </ul>
         </nav>
-        <aside class="main-sidebar sidebar-dark-olive elevation-5">
+        <aside class="main-sidebar sidebar-dark-secondary elevation-5">
             <p class="text-center brand-link">
                 <a href="index.php" style="text-decoration: none; color: inherit;">
                     <img src="../assets/image/logo/favicon.png" alt="iServe Admin" id="profile-image"style="width: 100px; height: 100px; object-fit: cover;">
@@ -80,22 +84,16 @@ try {
                         <li class="nav-item">
                             <a href="#" class="nav-link active" name="menu" menucode="dashboard">
                                 <i class="nav-icon bi bi-grid"></i>
-                                <p>Work Queue</p>
+                                <p>Dashboard</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                             <a href="#" class="nav-link" name="menu" menucode="apply_service">
-                                <i class="nav-icon bi bi-file-earmark-post"></i>
-                                <p>Services</p>
-                            </a>
-                        </li> 
-                        <li class="nav-item">
                              <a href="#" class="nav-link" name="menu" menucode="services">
                                 <i class="nav-icon bi bi-stickies"></i>
-                                <p>Published Service</p>
+                                <p>Published Control</p>
                             </a>
                         </li> 
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="#" class="nav-link" name="menu" menucode="ticket_lookup">
                                 <i class="nav-icon bi bi-search"></i>
                                 <p>Look Up Ticket</p>
@@ -124,7 +122,7 @@ try {
                                 <i class="nav-icon bi bi-gear"></i>
                                 <p>Settings</p>
                             </a>
-                        </li> 
+                        </li>  -->
                         <hr>
                         <li class="nav-item">
                             <a href="#" class="nav-link" onclick="logout()">
@@ -164,12 +162,19 @@ try {
 
 <script src="../assets/js/jquery.min.js"></script>
 <script src="../assets/plugins/sweetalert2/sweetalert2.min.js"></script>
+<script src="../assets/plugins/jquery-steps/jquery.steps.min.js"></script>
+<script src="../assets/plugins/jquery-ui-latest/jquery-ui.min.js"></script>
 <script src="../assets/plugins/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/plugins/toastr/toastr.min.js"></script>
 <script src="../assets/plugins/chart.js/Chart.min.js"></script>
 <script src="../assets/plugins/moment/moment.min.js"></script>
-<script src="../assets/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="../assets/plugins/pace/pace.min.js"></script>
+<script src="../assets/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="../assets/plugins/jszip/jszip.min.js"></script>
+<script src="../assets/plugins/jsgrid/jsgrid.min.js"></script>
+<script src="../assets/plugins/dropzone/dropzone.js"></script>
 <script src="../assets/plugins/datatables/datatables.min.js"></script>
+<script src="../assets/plugins/bs-stepper/js/bs-stepper.min.js"></script>
 <script src="../assets/plugins/daterangepicker/daterangepicker.js"></script>
 <script src="../assets/plugins/summernote/summernote-lite.min.js"></script>
 <script src="../assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
