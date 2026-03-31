@@ -1,0 +1,17 @@
+{
+    "name": "imperialappliance/oneservice",
+    "autoload": {
+        "psr-4": {
+            "Imperialappliance\\Oneservice\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "padillareil",
+            "email": "padillareil12@gmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^7.0"
+    }
+}

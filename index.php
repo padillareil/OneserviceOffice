@@ -43,7 +43,6 @@ try {
   <link rel="stylesheet" href="assets/plugins/daterangepicker/daterangepicker.css">
   <link rel="stylesheet" href="assets/plugins/summernote/summernote-lite.min.css">
   <link rel="stylesheet" href="assets/plugins/datepicker/jquery-ui.structure.min.css">
-  <link rel="stylesheet" href="node_modules/uikit/dist/css/uikit.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="icon" href="assets/image/logo/favicon.png">
 
@@ -163,8 +162,7 @@ try {
 <script src="assets/js/global-scripts.js"></script>
 <script src="assets/js/datatables.min.js"></script>
 <script src="assets/plugins/datepicker/jquery-ui.min.js"></script>
-<script src="node_modules/uikit/dist/js/uikit.min.js"></script>
-<script src="node_modules/xlsx/dist/xlsx.full.min.js"></script>
+<script src="assets/plugins/xlsx/dist/xlsx.full.min.js"></script>
 <script src="assets/js/script.js"></script>
 <?php include 'modal.php';?>
 </body>
